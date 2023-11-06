@@ -1,0 +1,149 @@
+.table-scroll {
+  max-width: 100vw !important;
+  overflow: auto;
+}
+
+.table-scroll > ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+}
+
+.table-scroll > ul > li {
+  margin: 0 15px;
+  background: #0CC0CE;
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.profile-search-station > ul > li {
+  margin: 0 15px;
+  background: #0CC0CE !important;
+  color: #ffffff !important;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.profile-search-station > ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-search-station > ul > li {
+  margin: 0 15px;
+  background: #377BE8;
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.previous > a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.next > a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.pagination__link--active {
+  background: #ffffff !important;
+  color: #0CC0CE !important;
+  border: 2px solid #0CC0CE;
+}
+
+.column-admin-station {
+  cursor: pointer;
+}
+
+.table-location-width {
+  max-width: 900px !important;
+  max-height: 90vh !important;
+}
+
+.table-update-width {
+  max-width: 900px !important;
+  max-height: 90vh !important;
+}
+
+.table-upload-width {
+  max-width: 700px !important;
+  max-height: 90vh !important;
+}
+
+.modal-item-wrapper {
+  padding: 13px 15px;
+  max-width: 400px;
+  width: 100%;
+  background: #e8ebef;
+  border-radius: 10px;
+}
+
+.modal-item-wrapper + .modal-item-wrapper {
+  margin-top: 18px;
+}
+
+@media (max-width: 830px) {
+
+  .modal-body-item {
+    justify-content: center !important;
+  }
+
+}
+
+.input-label-station-wrapper {
+  max-width: 400px;
+  width: 100%;
+}
+
+.input-station {
+  max-width: 300px;
+}
+
+.search-name-wrapper {
+  background: #e8ebef;
+  padding: 10px 20px;
+  border-radius: 10px;
+  max-width: 800px;
+}
+
+.search-region-wrapper {
+  background: #e8ebef;
+  padding: 10px 20px;
+  border-radius: 10px;
+  max-width: 700px;
+}
+
+.search-label-region {
+  color: #417EE1;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.search-region {
+  max-width: 280px;
+  width: 100%;
+}
+
+.stations-search-heading {
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 21px;
+  color: #0CC0CE;
+  font-weight: 600;
+}
+
+.user-station-search-battery-label {
+  font-size: 20px;
+  color:#0CC0CE;
+}
+
+.user-station-save-data-desc {
+  color: green;
+  font-weight: 500;
+}

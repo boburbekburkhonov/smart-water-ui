@@ -31,10 +31,10 @@ const Login = () => {
           }
         });
     }
-    if(localStorage.getItem('accessToken')){
-      window.location.href = "/user";
+    // if(localStorage.getItem('accessToken')){
+    //   window.location.href = "/user";
 
-    }
+    // }
   }, []);
 
   const loginUser = async (e) => {

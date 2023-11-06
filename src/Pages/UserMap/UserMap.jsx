@@ -1,4 +1,5 @@
 import React from 'react';
+import "./UserMap.css";
 
 const UserMap = () => {
   return (

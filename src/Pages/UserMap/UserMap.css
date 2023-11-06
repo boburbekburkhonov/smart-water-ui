@@ -1,0 +1,235 @@
+#map-container {
+  height: 90vh !important;
+  width: 80% !important;
+}
+
+.map-station-wrapper-list {
+  width: 20%;
+  height: 90vh !important;
+  overflow: auto;
+}
+
+.gm-style-iw {
+  max-width: 280px !important;
+  width: 100%;
+}
+
+.infowindow-desc {
+  font-size: 16px;
+}
+
+.infowindow-span {
+  font-size: 15px;
+  font-weight: 600;
+  color: #488dfc;
+}
+
+.infowindow-desc-not-last-data {
+  font-size: 17px !important;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.admin-map-search {
+  padding: 0 10px;
+  padding-bottom: 20px;
+  max-width: 250px;
+}
+
+.admin-map-search > input {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.active-user-map {
+  background: #0CC0CE !important;
+  color: white;
+}
+
+/* ! ANIMATION */
+
+.user-map-animation-wrapper {
+  height: 80vh;
+}
+
+#mask {
+  position: fixed;
+  top: 30%;
+  left: 57%;
+  transform: translate(-50%, -60%);
+  margin: auto;
+  font-family: 'Poppins', sans-serif;
+  font-size: 60px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 90px;
+  width: 100%;
+
+  background-image: -webkit-radial-gradient(
+    center 10px,
+    80px 100px,
+    #E45050 40px,
+    #32779C 51%
+  );
+
+  background-size: 40px 110px;
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation-name: wave-animation;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+
+@keyframes wave-animation {
+  0% {
+    background-position: 200px 10px;
+  }
+  50% {
+    background-position: 100px -20px;
+  }
+  100% {
+    background-position: 0px -40px;
+  }
+}
+
+#box {
+  margin: auto;
+  width: 100%;
+  border-radius: 20px;
+  background-image: -webkit-linear-gradient(45deg, 0%, 100%);
+  opacity: 0.95;
+}
+
+.wrap {
+  position: fixed;
+  top: 40%;
+  left: 55%;
+  transform: translate(-50%, -60%);
+}
+
+.drop {
+  width: 40px;
+  height: 40px;
+  left: 55%;
+  margin-left: -20px;
+  position: absolute;
+  animation: drop 2s cubic-bezier(0.55, 0.085, 0.68, 0.53) 0s infinite;
+}
+
+.drop circle {
+  fill: #2a96ed;
+}
+
+.drop-outer {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100px;
+  height: 200px;
+  overflow: hidden;
+  border-bottom-right-radius: 50px;
+  border-bottom-left-radius: 50px;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  background-clip: padding-box;
+  -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
+}
+
+.ripple {
+  position: absolute;
+  box-sizing: border-box;
+  width: 240px;
+  height: 240px;
+  top: 68px;
+  left: -70px;
+  perspective: 100;
+  transform: rotateX(65deg);
+}
+
+.ripple .ripple-svg {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  opacity: 0;
+}
+
+.ripple .ripple-svg circle {
+   fill: none;
+   stroke: #2a96ed;
+   stroke-width: 10px;
+   stroke-alignment: inner;
+}
+
+.ripple-1 {
+  animation: ripple 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s infinite;
+}
+
+.ripple-1 .ripple-svg {
+  animation: fade-in-out 2s linear 0s infinite;
+}
+
+.ripple-1 .ripple-svg circle {
+  animation: border 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s infinite;
+}
+
+.ripple-2 {
+  animation: ripple 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s infinite;
+}
+
+.ripple-2 .ripple-svg {
+  animation: fade-in-out 2s linear 0.2s infinite;
+}
+
+.ripple-2 .ripple-svg circle {
+  animation: border 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s infinite;
+}
+
+.ripple-3 {
+  animation: ripple 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.35s infinite;
+}
+
+.ripple-3 .ripple-svg {
+  animation: fade-in-out 2s linear 0.35s infinite;
+}
+
+.ripple-3 .ripple-svg circle {
+  animation: border 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.35s infinite;
+}
+
+@keyframes drop {
+  0% {
+    transform: scale3d(0.01,0.01,0.01) translateY(0)
+  }
+  10% {
+    transform: scale3d(1,1,1)
+  }
+  44% {
+    transform: scale3d(1,1,1) translateY(200px)
+  }
+  100% {
+    transform: scale3d(1,1,1) translateY(200px)
+  }
+}
+
+@keyframes fade-in-out {
+  0% {opacity: 0}
+  42% {opacity: 0}
+  52% {opacity: 1}
+  65% {opacity: 1}
+  100% {opacity: 0}
+}
+
+@keyframes ripple {
+  0% { transform: rotateX(65deg) scale3d(0.2, 0.2, 0.2) }
+  42% { transform: rotateX(65deg) scale3d(0.2, 0.2, 0.2) }
+  100% { transform: rotateX(65deg) scale3d(0.9, 0.9, 0.9) }
+}
+
+@keyframes border {
+  0% { stroke-width: 6px }
+  42% { stroke-width: 6px }
+  100% {stroke-width: 2px }
+}
