@@ -90,7 +90,7 @@
 
 .user-last-data-table-wrapper > ul > li {
   margin: 0 15px;
-  background: #0CC0CE;
+  background: #0091D5;
   color: #ffffff;
   padding: 3px 10px;
   border-radius: 10px;
@@ -98,7 +98,7 @@
 
 .profile-search-station > ul > li {
   margin: 0 15px;
-  background: #0CC0CE !important;
+  background: #0091D5 !important;
   color: #ffffff !important;
   padding: 3px 10px;
   border-radius: 10px;
@@ -132,8 +132,8 @@
 
 .pagination__link--active {
   background: #ffffff !important;
-  color: #0CC0CE !important;
-  border: 2px solid #0CC0CE;
+  color: #0091D5 !important;
+  border: 2px solid #0091D5;
 }
 
 .dashboard-list-item {

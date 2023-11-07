@@ -95,7 +95,6 @@ const UserLastData = (prop) => {
 
         const access_token = resp;
 
-        console.log("Token " + access_token);
         window.localStorage.setItem("accessToken", access_token);
         customFetch.defaults.headers.common[
           "Authorization"
@@ -326,8 +325,8 @@ const UserLastData = (prop) => {
   // ! SAVE DATA EXCEL
   const exportDataToExcel = () => {
     let sath = "sath (sm)";
-    let shurlanish = "shurlanish (g/l)";
-    let temperatura = "temperatura (°C)";
+    let hajm = "hajm (m³/s)";
+    let tuzatish = "tuzatish";
     const fixedDate = new Date();
 
     const resultDate = `${fixedDate.getDate()}/${
@@ -357,8 +356,8 @@ const UserLastData = (prop) => {
             status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
             integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
             [sath]: Number(e.lastData?.level).toFixed(2),
-            [shurlanish]: Number(e.lastData?.conductivity).toFixed(2),
-            [temperatura]: Number(e.lastData?.temp).toFixed(2),
+            [hajm]: Number(e.lastData?.volume).toFixed(2),
+            [tuzatish]: Number(e.lastData?.correction),
             sana: e.lastData?.date,
           });
         });
@@ -386,20 +385,20 @@ const UserLastData = (prop) => {
         );
 
         const resultExcelData = [];
-        request.data.data.docs.forEach((e) => {
+        request.data.data.forEach((e) => {
           resultExcelData.push({
-            nomi: e.stations.name,
-            imei: e.stations.imel,
-            battery: e.stations.battery,
-            lokatsiya: e.stations.location,
-            programma_versiyasi: e.stations.programVersion,
-            qurilma_telefon_raqami: e.stations.devicePhoneNum,
-            status: e.stations.status == 1 ? "ishlayapti" : "ishlamayapti",
+            nomi: e.station.name,
+            imei: e.station.imel,
+            battery: e.station.battery,
+            lokatsiya: e.station.location,
+            programma_versiyasi: e.station.programVersion,
+            qurilma_telefon_raqami: e.station.devicePhoneNum,
+            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
             integratsiya:
-              e?.stations.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
             [sath]: Number(e.level).toFixed(2),
-            [shurlanish]: Number(e.conductivity).toFixed(2),
-            [temperatura]: Number(e.temp).toFixed(2),
+            [hajm]: Number(e.volume).toFixed(2),
+            [tuzatish]: Number(e.correction),
             sana: e.date,
           });
         });
@@ -409,7 +408,7 @@ const UserLastData = (prop) => {
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
 
-        if (request.data.data.docs.length > 0) {
+        if (request.data.data.length > 0) {
           XLSX.writeFile(
             workBook,
             `${
@@ -427,20 +426,20 @@ const UserLastData = (prop) => {
         );
 
         const resultExcelData = [];
-        request.data.data.docs.forEach((e) => {
+        request.data.data.forEach((e) => {
           resultExcelData.push({
-            nomi: e.stations.name,
-            imei: e.stations.imel,
-            battery: e.stations.battery,
-            lokatsiya: e.stations.location,
-            programma_versiyasi: e.stations.programVersion,
-            qurilma_telefon_raqami: e.stations.devicePhoneNum,
-            status: e.stations.status == 1 ? "ishlayapti" : "ishlamayapti",
+            nomi: e.station.name,
+            imei: e.station.imel,
+            battery: e.station.battery,
+            lokatsiya: e.station.location,
+            programma_versiyasi: e.station.programVersion,
+            qurilma_telefon_raqami: e.station.devicePhoneNum,
+            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
             integratsiya:
-              e?.stations.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
             [sath]: Number(e.level).toFixed(2),
-            [shurlanish]: Number(e.conductivity).toFixed(2),
-            [temperatura]: Number(e.temp).toFixed(2),
+            [hajm]: Number(e.volume).toFixed(2),
+            [tuzatish]: Number(e.correction),
             sana: e.date,
           });
         });
@@ -450,7 +449,7 @@ const UserLastData = (prop) => {
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
 
-        if (request.data.data.docs.length > 0) {
+        if (request.data.data.length > 0) {
           XLSX.writeFile(
             workBook,
             `${
@@ -468,20 +467,20 @@ const UserLastData = (prop) => {
         );
 
         const resultExcelData = [];
-        request.data.data.docs.forEach((e) => {
+        request.data.data.forEach((e) => {
           resultExcelData.push({
-            nomi: e.stations.name,
-            imei: e.stations.imel,
-            battery: e.stations.battery,
-            lokatsiya: e.stations.location,
-            programma_versiyasi: e.stations.programVersion,
-            qurilma_telefon_raqami: e.stations.devicePhoneNum,
-            status: e.stations.status == 1 ? "ishlayapti" : "ishlamayapti",
+            nomi: e.station.name,
+            imei: e.station.imel,
+            battery: e.station.battery,
+            lokatsiya: e.station.location,
+            programma_versiyasi: e.station.programVersion,
+            qurilma_telefon_raqami: e.station.devicePhoneNum,
+            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
             integratsiya:
-              e?.stations.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
             [sath]: Number(e.level).toFixed(2),
-            [shurlanish]: Number(e.conductivity).toFixed(2),
-            [temperatura]: Number(e.temp).toFixed(2),
+            [hajm]: Number(e.volume).toFixed(2),
+            [tuzatish]: Number(e.correction),
             sana: e.date,
           });
         });
@@ -491,7 +490,7 @@ const UserLastData = (prop) => {
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
 
-        if (request.data.data.docs.length > 0) {
+        if (request.data.data.length > 0) {
           XLSX.writeFile(
             workBook,
             `${
@@ -509,20 +508,20 @@ const UserLastData = (prop) => {
         );
 
         const resultExcelData = [];
-        request.data.data.docs.forEach((e) => {
+        request.data.data.forEach((e) => {
           resultExcelData.push({
-            nomi: e.stations.name,
-            imei: e.stations.imel,
-            battery: e.stations.battery,
-            lokatsiya: e.stations.location,
-            programma_versiyasi: e.stations.programVersion,
-            qurilma_telefon_raqami: e.stations.devicePhoneNum,
-            status: e.stations.status == 1 ? "ishlayapti" : "ishlamayapti",
+            nomi: e.station.name,
+            imei: e.station.imel,
+            battery: e.station.battery,
+            lokatsiya: e.station.location,
+            programma_versiyasi: e.station.programVersion,
+            qurilma_telefon_raqami: e.station.devicePhoneNum,
+            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
             integratsiya:
-              e?.stations.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
             [sath]: Number(e.level).toFixed(2),
-            [shurlanish]: Number(e.conductivity).toFixed(2),
-            [temperatura]: Number(e.temp).toFixed(2),
+            [hajm]: Number(e.volume).toFixed(2),
+            [tuzatish]: Number(e.correction),
             sana: e.date,
           });
         });
@@ -532,7 +531,7 @@ const UserLastData = (prop) => {
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
 
-        if (request.data.data.docs.length > 0) {
+        if (request.data.data.length > 0) {
           XLSX.writeFile(
             workBook,
             `${
@@ -612,7 +611,7 @@ const UserLastData = (prop) => {
       setLoader(false);
     }, 700);
   };
-  console.log(allStation);
+
   return (
     <section className="home-section py-3">
       <div className="container-fluid">

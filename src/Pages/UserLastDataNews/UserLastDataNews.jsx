@@ -325,8 +325,8 @@ const UserLastDataNews = () => {
   const option = {
     scales: {
       y: {
-        min: scalesMinMaxLine().min - 3,
-        max: scalesMinMaxLine().max + 3
+        min: scalesMinMaxLine().min - 20,
+        max: scalesMinMaxLine().max + 20
       }
     },
     maintainAspectRatio: false,

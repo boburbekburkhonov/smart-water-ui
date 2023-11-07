@@ -151,26 +151,26 @@ td {
 
 .user-data-hour-wrapper > ul > li {
   margin: 0 15px;
-  background: #0CC0CE;
+  background: #0091D5;
   color: #ffffff;
   padding: 3px 10px;
   border-radius: 10px;
 }
 .pagination__link--active {
   background: #ffffff !important;
-  color: #0CC0CE !important;
-  border: 2px solid #0CC0CE;
+  color: #0091D5 !important;
+  border: 2px solid #0091D5;
 }
 
 .color-seach--daily-label {
-	font-weight: 500;
-  color: #0CC0CE !important;
+   font-weight: 500;
+   color: #0091D5 !important;
 }
 
 .search-between-btn {
 	padding: 5px 5px;
 	border: transparent;
-	background: #0CC0CE;
+	background: #0091D5;
 	color: #ffffff;
 	border-radius: 3px;
 }
@@ -183,7 +183,7 @@ td {
 .loader {
 	width: 48px;
 	height: 48px;
-	border: 5px solid #0CC0CE;
+	border: 5px solid #0091D5;
 	border-bottom-color: transparent;
 	border-radius: 50%;
 	display: inline-block;
