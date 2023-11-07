@@ -970,7 +970,7 @@ const UserLastData = (prop) => {
                                   </div>
                                   <div className="d-flex align-items-center">
                                     <p className="m-0 user-lastdata-level-desc">
-                                      Hajmi:
+                                      Hajm:
                                     </p>
                                     <span className="fw-bold text-end w-100 user-lastdata-level-desc">
                                       {whichStation == "allStation" &&
