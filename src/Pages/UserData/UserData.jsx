@@ -30,15 +30,7 @@ const UserData = () => {
   const dateSearch = new Date();
   dateSearch.setDate(new Date().getDate() - 4);
   const [hourSearchBoolean, setHourSearchBoolean] = useState(false);
-  const [searchBetweenStartDate, setSearchBetweenStartDate] = useState(
-    dateSearch.toISOString().substring(0, 10)
-  );
-  const [searchBetweenEndDate, setSearchBetweenEndDate] = useState(
-    new Date().toISOString().substring(0, 10)
-  );
-  const [searchBetweenBoolean, setSearchBetweenBoolean] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPagesSearchBetween, setTotalPagesSearchBetween] = useState(0);
   const [totalPagesHour, setTotalPagesHour] = useState(0);
   const [totalPagesYesterday, setTotalPagesYesterday] = useState(0);
   const [totalPagesDaily, setTotalPagesDaily] = useState(0);
@@ -46,8 +38,6 @@ const UserData = () => {
   const [activeMarker, setActiveMarker] = useState();
   const [searchDate, setSearchDate] = useState(false);
   const [statisticsStation, setStatisticsStation] = useState([]);
-  const [searchBetweenDataMain, setSearchBetweenDataMain] = useState([]);
-  const [searchBetweenData, setSearchBetweenData] = useState([]);
   const [lastDataMain, setLastDataMain] = useState([]);
   const [lastData, setLastData] = useState([]);
   const [lastDataLength, setLastDataLength] = useState(0);
@@ -247,17 +237,6 @@ const UserData = () => {
       setMonthlyDataMain(requestMonthlyData.data.stations.data);
       setMonthlyData(requestMonthlyData.data.stations.data);
       setTotalPagesMonthly(requestMonthlyData.data.stations.totalPages);
-
-      // ! SEARCH BETWEEN
-      setSearchBetweenBoolean(true);
-      const requestSearchBetween = await customFetch.get(
-        `/yesterdayData/getAllDataByTwoDayBetween?page=1&perPage=10&startDay=${searchBetweenStartDate}&endDay=${searchBetweenEndDate}`
-      );
-
-      setSearchBetweenDataMain(requestSearchBetween.data.data);
-      setSearchBetweenData(requestSearchBetween.data.data);
-      setTotalPagesSearchBetween(requestSearchBetween.data.totalPages);
-      setSearchBetweenBoolean(false);
     };
 
     getStationFunc();
@@ -274,15 +253,15 @@ const UserData = () => {
           `/last-data/getLastData?page=${page}&perPage=${20}`
         );
 
-        if (requestLastData.data.data.length > 0) {
+        if (requestLastData.data.totalPages >= page) {
           requestLastData.data.data.forEach((e) => {
             lastData.push(e);
             lastDataMain.push(e);
           });
+          console.log(requestLastData.data.data);
           setLastDataLength(lastData.length);
           page++;
-
-        } else if (requestLastData.data.data.length == 0) {
+        } else  {
           end = false;
         }
       }
@@ -328,7 +307,7 @@ const UserData = () => {
     labels: labels,
     datasets: [
       {
-        label: "Bugungi ma'lumotlar",
+        label: "Ma'lumotlar",
         data:
           whichData == "hour" && !searchWithDaily
             ? todayDataStatistic.todayData?.map((e) =>
@@ -499,11 +478,6 @@ const UserData = () => {
         e.name.toLowerCase().includes(inputValue)
       );
       setMonthlyData(search);
-    } else if (whichData == "search-between") {
-      const search = searchBetweenDataMain.filter((e) =>
-        e.name.toLowerCase().includes(inputValue)
-      );
-      setSearchBetweenData(search);
     }
   };
 
@@ -526,7 +500,6 @@ const UserData = () => {
       .get(
         `/dailyData/getAllStationsDataByMonth?page=1&perPage=10&month=${date}`
       )
-      .then((res) => res.json())
       .then((data) => {
         setDailyDataMain(data.data.data);
         setDailyData(data.data.data);
@@ -593,10 +566,10 @@ const UserData = () => {
         `${role == 'USER' ? name : balanceOrgName} ning kunlik ${
           valueTodayData == "level"
             ? "sath"
-            : valueTodayData == "conductivity"
-            ? "sho'rlanish"
-            : valueTodayData == "temp"
-            ? "temperatura"
+            : valueTodayData == "volume"
+            ? "hajm"
+            : valueTodayData == "correction"
+            ? "tuzatish"
             : null
         } ma'lumotlari`,
         20,
@@ -617,10 +590,10 @@ const UserData = () => {
           `${role == 'USER' ? name : balanceOrgName} ning kunlik ${
             valueTodayData == "level"
               ? "sath"
-              : valueTodayData == "conductivity"
-              ? "sho'rlanish"
-              : valueTodayData == "temp"
-              ? "temperatura"
+              : valueTodayData == "volume"
+              ? "hajm"
+              : valueTodayData == "correction"
+              ? "tuzatish"
               : null
           } ma'lumotlari ${resultDate}.pdf`
         );
@@ -632,10 +605,10 @@ const UserData = () => {
         `${role == 'USER' ? name : balanceOrgName} ning oylik ${
           valueTodayData == "level"
             ? "sath"
-            : valueTodayData == "conductivity"
-            ? "sho'rlanish"
-            : valueTodayData == "temp"
-            ? "temperatura"
+            : valueTodayData == "volume"
+            ? "hajm"
+            : valueTodayData == "correction"
+            ? "tuzatish"
             : null
         } ma'lumotlari`,
         20,
@@ -656,10 +629,10 @@ const UserData = () => {
           `${role == 'USER' ? name : balanceOrgName} ning oylik ${
             valueTodayData == "level"
               ? "sath"
-              : valueTodayData == "conductivity"
-              ? "sho'rlanish"
-              : valueTodayData == "temp"
-              ? "temperatura"
+              : valueTodayData == "volume"
+              ? "hajm"
+              : valueTodayData == "correction"
+              ? "tuzatish"
               : null
           } ma'lumotlari ${resultDate}.pdf`
         );
@@ -671,10 +644,10 @@ const UserData = () => {
         `${role == 'USER' ? name : balanceOrgName} ning kecha kelgan ${
           valueTodayData == "level"
             ? "sath"
-            : valueTodayData == "conductivity"
-            ? "sho'rlanish"
-            : valueTodayData == "temp"
-            ? "temperatura"
+            : valueTodayData == "volume"
+            ? "hajm"
+            : valueTodayData == "correction"
+            ? "tuzatish"
             : null
         } ma'lumotlari`,
         20,
@@ -695,49 +668,10 @@ const UserData = () => {
           `${role == 'USER' ? name : balanceOrgName} ning kecha kelgan ${
             valueTodayData == "level"
               ? "sath"
-              : valueTodayData == "conductivity"
-              ? "sho'rlanish"
-              : valueTodayData == "temp"
-              ? "temperatura"
-              : null
-          } ma'lumotlari ${resultDate}.pdf`
-        );
-      }
-    } else if (whichData == "search-between") {
-      const doc = new jsPDF("l", "mm", [397, 210]);
-
-      doc.text(
-        `${role == 'USER' ? name : balanceOrgName} ning ${searchBetweenStartDate} dan ${searchBetweenEndDate} gacha oraliqdagi ${
-          valueTodayData == "level"
-            ? "sath"
-            : valueTodayData == "conductivity"
-            ? "sho'rlanish"
-            : valueTodayData == "temp"
-            ? "temperatura"
-            : null
-        } ma'lumotlari ${resultDate}`,
-        20,
-        10
-      );
-
-      doc.autoTable({
-        html: "#table-style-search-id",
-        margin: { right: 5, left: 5 },
-        styles: { halign: "center" },
-        theme: "striped",
-        headStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
-        bodyStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
-      });
-
-      if (searchBetweenData.length > 0) {
-        doc.save(
-          `${role == 'USER' ? name : balanceOrgName} ning ${searchBetweenStartDate} dan ${searchBetweenEndDate} gacha oraliqdagi ${
-            valueTodayData == "level"
-              ? "sath"
-              : valueTodayData == "conductivity"
-              ? "sho'rlanish"
-              : valueTodayData == "temp"
-              ? "temperatura"
+              : valueTodayData == "volume"
+              ? "hajm"
+              : valueTodayData == "correction"
+              ? "tuzatish"
               : null
           } ma'lumotlari ${resultDate}.pdf`
         );
@@ -825,27 +759,6 @@ const UserData = () => {
         XLSX.writeFile(
           data,
           `${role == 'USER' ? name : balanceOrgName} ning kecha kelgan ${
-            valueTodayData == "level"
-              ? "sath"
-              : valueTodayData == "volume"
-              ? "hajm"
-              : valueTodayData == "correction"
-              ? "tuzatish"
-              : null
-          } ma'lumotlari ${resultDate}.xlsx`
-        );
-      }
-    } else if (whichData == "search-between") {
-      const tableSearchBetween = document.getElementById(
-        "table-style-search-id"
-      );
-
-      const data = XLSX.utils.table_to_book(tableSearchBetween);
-
-      if (searchBetweenData.length > 0) {
-        XLSX.writeFile(
-          data,
-          `${role == 'USER' ? name : balanceOrgName} ning ${searchBetweenStartDate} dan ${searchBetweenEndDate} gacha oraliqdagi ${
             valueTodayData == "level"
               ? "sath"
               : valueTodayData == "volume"
@@ -1289,32 +1202,14 @@ const UserData = () => {
                                 height={12}
                               />
                               <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Sho'rlanish:
+                              Hajm:
                               </p>{" "}
                               <span className="infowindow-span">
                                 {Number(
                                   monthlyDataStatistic?.monthlyData[0]
-                                    ?.conductivity
+                                    ?.volume
                                 ).toFixed(2)}{" "}
-                                g/l
-                              </span>
-                            </div>
-
-                            <div className="d-flex align-items-center mb-1">
-                              <img
-                                src={circleBlue}
-                                alt="circleBlue"
-                                width={12}
-                                height={12}
-                              />
-                              <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Temperatura:
-                              </p>{" "}
-                              <span className="infowindow-span">
-                                {Number(
-                                  monthlyDataStatistic?.monthlyData[0]?.temp
-                                ).toFixed(2)}{" "}
-                                °C
+                                m³/s
                               </span>
                             </div>
 
@@ -1355,7 +1250,7 @@ const UserData = () => {
                           </div>
                         )
                       ) : whichData == "daily" ? (
-                        dailyData.length > 0 ? (
+                        dailyDataStatistic.dailyData.length > 0 ? (
                           <div>
                             <h3 className="fw-semibold text-success fs-6">
                               {dailyDataStatistic.name}
@@ -1387,31 +1282,13 @@ const UserData = () => {
                                 height={12}
                               />
                               <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Sho'rlanish:
+                              Hajm:
                               </p>{" "}
                               <span className="infowindow-span">
                                 {Number(
-                                  dailyDataStatistic?.dailyData[0]?.conductivity
+                                  dailyDataStatistic?.dailyData[0]?.volume
                                 ).toFixed(2)}{" "}
-                                g/l
-                              </span>
-                            </div>
-
-                            <div className="d-flex align-items-center mb-1">
-                              <img
-                                src={circleBlue}
-                                alt="circleBlue"
-                                width={12}
-                                height={12}
-                              />
-                              <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Temperatura:
-                              </p>{" "}
-                              <span className="infowindow-span">
-                                {Number(
-                                  dailyDataStatistic?.dailyData[0]?.temp
-                                ).toFixed(2)}{" "}
-                                °C
+                               m³/s
                               </span>
                             </div>
 
@@ -1430,105 +1307,6 @@ const UserData = () => {
                                   dailyDataStatistic?.dailyData[0]?.date.split(
                                     "-"
                                   )[2]
-                                }
-                              </span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div>
-                            <h3 className="fw-semibold text-success fs-6 text-center">
-                              {dailyDataStatistic.name}
-                            </h3>
-                            <div className="d-flex align-items-center justify-content-center">
-                              <img
-                                src={circleRed}
-                                alt="circleBlue"
-                                width={18}
-                                height={18}
-                              />
-                              <p className="m-0 infowindow-desc-not-last-data fs-6 ms-1 me-1 ">
-                                Ma'lumot kelmagan...
-                              </p>
-                            </div>{" "}
-                          </div>
-                        )
-                      ) : whichData == "search-between" ? (
-                        searchBetweenData.length > 0 ? (
-                          <div>
-                            <h3 className="fw-semibold text-success fs-6">
-                              {searchBetweenDataStatistic.name}
-                            </h3>
-
-                            <div className="d-flex align-items-center mb-1">
-                              <img
-                                src={circleBlue}
-                                alt="circleBlue"
-                                width={12}
-                                height={12}
-                              />
-                              <p className="infowindow-desc m-0 ms-1 me-1">
-                                Sath:
-                              </p>{" "}
-                              <span className="infowindow-span">
-                                {Number(
-                                  searchBetweenDataStatistic?.allData[0]?.level
-                                ).toFixed(2)}{" "}
-                                sm
-                              </span>
-                            </div>
-
-                            <div className="d-flex align-items-center mb-1">
-                              <img
-                                src={circleBlue}
-                                alt="circleBlue"
-                                width={12}
-                                height={12}
-                              />
-                              <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Sho'rlanish:
-                              </p>{" "}
-                              <span className="infowindow-span">
-                                {Number(
-                                  searchBetweenDataStatistic?.allData[0]
-                                    ?.conductivity
-                                ).toFixed(2)}{" "}
-                                g/l
-                              </span>
-                            </div>
-
-                            <div className="d-flex align-items-center mb-1">
-                              <img
-                                src={circleBlue}
-                                alt="circleBlue"
-                                width={12}
-                                height={12}
-                              />
-                              <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Temperatura:
-                              </p>{" "}
-                              <span className="infowindow-span">
-                                {Number(
-                                  searchBetweenDataStatistic?.allData[0]?.temp
-                                ).toFixed(2)}{" "}
-                                °C
-                              </span>
-                            </div>
-
-                            <div className="d-flex align-items-center">
-                              <img
-                                src={circleBlue}
-                                alt="circleBlue"
-                                width={12}
-                                height={12}
-                              />
-                              <p className="m-0 infowindow-desc ms-1 me-1">
-                                Kun:
-                              </p>{" "}
-                              <span className="infowindow-span">
-                                {
-                                  searchBetweenDataStatistic?.allData[0]?.date.split(
-                                    " "
-                                  )[0]
                                 }
                               </span>
                             </div>
@@ -1585,14 +1363,14 @@ const UserData = () => {
                                 height={12}
                               />
                               <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Sho'rlanish:
+                              Hajm :
                               </p>{" "}
                               <span className="infowindow-span">
                                 {Number(
                                   yesterdayDataStatistic?.yesterdayData[0]
-                                    ?.conductivity
+                                    ?.volume
                                 ).toFixed(2)}{" "}
-                                g/l
+                                m³/s
                               </span>
                             </div>
 
@@ -1604,13 +1382,12 @@ const UserData = () => {
                                 height={12}
                               />
                               <p className="m-0 infowindow-desc ms-1 me-1 ">
-                                Temperatura:
+                              Tuzatish:
                               </p>{" "}
                               <span className="infowindow-span">
                                 {Number(
-                                  yesterdayDataStatistic?.yesterdayData[0]?.temp
-                                ).toFixed(2)}{" "}
-                                °C
+                                  yesterdayDataStatistic?.yesterdayData[0]?.correction
+                                )}{" "}
                               </span>
                             </div>
 
@@ -1665,8 +1442,10 @@ const UserData = () => {
                     options={option}
                   />
                 </div>
-
-                <select
+                {
+                  whichData == 'hour' || whichData == 'yesterday'
+                  ?
+                  <select
                   onChange={(e) => setValueStatistic(e.target.value)}
                   className="form-select select-user-last-data select-user-last-data-width"
                 >
@@ -1674,6 +1453,15 @@ const UserData = () => {
                   <option value="volume">Hajm (m³/s)</option>
                   <option value="correction">Tuzatish</option>
                 </select>
+                  :
+                  <select
+                  onChange={(e) => setValueStatistic(e.target.value)}
+                  className="form-select select-user-last-data select-user-last-data-width"
+                >
+                  <option value="level">Sathi (sm)</option>
+                  <option value="volume">Hajm (m³/s)</option>
+                </select>
+                }
               </div>
             </div>
           </div>
@@ -1959,10 +1747,10 @@ const UserData = () => {
                               className="form-select select-user-data-today ms-4"
                             >
                               <option value="level">Sathi (sm)</option>
-                              <option value="conductivity">
-                                Sho'rlanish (g/l)
+                              <option value="volume">
+                              Hajm (m³/s)
                               </option>
-                              <option value="temp">Temperatura (°C)</option>
+                              <option value="correction">Tuzatish</option>
                             </select>
                             <button
                               onClick={() => exportNewsByPdf()}
@@ -2113,10 +1901,9 @@ const UserData = () => {
                               className="form-select select-user-data-today ms-4"
                             >
                               <option value="level">Sathi (sm)</option>
-                              <option value="conductivity">
-                                Sho'rlanish (g/l)
+                              <option value="volume">
+                              Hajm (m³/s)
                               </option>
-                              <option value="temp">Temperatura (°C)</option>
                             </select>
                             <button
                               onClick={() => exportNewsByPdf()}
@@ -2254,10 +2041,9 @@ const UserData = () => {
                               className="form-select select-user-data-today ms-4"
                             >
                               <option value="level">Sathi (sm)</option>
-                              <option value="conductivity">
-                                Sho'rlanish (g/l)
+                              <option value="volume">
+                                Hajm (m³/s)
                               </option>
-                              <option value="temp">Temperatura (°C)</option>
                             </select>
                             <button
                               onClick={() => exportNewsByPdf()}
@@ -2361,7 +2147,7 @@ const UserData = () => {
                       </div>
                     </div>
                   </div>
-
+                  {/* LAST DATA */}
                   <div>
                     <div>
                       <div className="smartwell-search-user-data d-flex align-items-center flex-wrap">

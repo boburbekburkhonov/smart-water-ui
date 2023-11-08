@@ -226,8 +226,8 @@ const UserLastDataNews = () => {
             ? monthData.map((e) => e[valueStatistic]).reverse()
             : null,
         fill: false,
-        borderColor: "#0CC0CE",
-        backgroundColor: "#85e6ec",
+        borderColor: "#0091D5",
+        backgroundColor: "#7cc9ed",
         tension: 0.4,
       },
     ],
