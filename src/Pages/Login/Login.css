@@ -240,11 +240,12 @@ a.ssolink {
 }
 
 .main-color {
-  color: #226385 !important;
+  color: #0091D5 !important;
 }
 
 .main-background-color {
-  background: #226385 !important;
+  background: #0091D5 !important;
+  color: #ffffff !important;
 }
 
 .formbg {

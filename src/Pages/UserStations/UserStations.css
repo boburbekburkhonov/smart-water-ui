@@ -17,6 +17,10 @@
   border-radius: 10px;
 }
 
+.table thead tr {
+  border-bottom: none;
+}
+
 .profile-search-station > ul > li {
   margin: 0 15px;
   background: #0091D5 !important;
@@ -33,7 +37,7 @@
 
 .profile-search-station > ul > li {
   margin: 0 15px;
-  background: #377BE8;
+  background: #0091D5;
   color: #ffffff;
   padding: 3px 10px;
   border-radius: 10px;
@@ -120,7 +124,7 @@
 }
 
 .search-label-region {
-  color: #417EE1;
+  color: #0091D5;
   font-weight: 600;
   font-size: 20px;
 }
@@ -146,4 +150,9 @@
 .user-station-save-data-desc {
   color: green;
   font-weight: 500;
+}
+
+.c-table__header th {
+  background-color: #0091D5;
+  padding: 18px 6px 18px 12px;
 }
