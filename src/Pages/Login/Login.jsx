@@ -120,7 +120,7 @@ const Login = () => {
                     <div className="d-inline-block auth-logo">
                       <img src={logo} alt="JSLPS image" height="80" />
                     </div>
-                    <h3 className="mt-3 fw-semibold main-color">
+                    <h3 className="mt-3 fw-semibold login-heading">
                     Smart Water
                     </h3>
                   </div>
@@ -149,7 +149,7 @@ const Login = () => {
                       {error ? errorMessage : ""}
                     </p>
                 <div className="field padding-bottom--24">
-                  <button className='btn btn-primary w-100 main-background-color'>Kirish</button>
+                  <button className='btn btn-primary w-100 login-btn-background'>Kirish</button>
                 </div>
               </form>
             </div>

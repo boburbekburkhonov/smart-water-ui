@@ -239,6 +239,27 @@ a.ssolink {
   }
 }
 
+.login-heading {
+  color: #226385;
+}
+
+.login-btn-background {
+  background: #226385;
+  border: 2px solid #226385;
+}
+
+.login-btn-background:hover {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #226385;
+}
+
+.login-btn-background:active {
+  background: #226385 !important;
+  border: 2px solid #226385 !important;
+  opacity: 0.6;
+}
+
 .main-color {
   color: #0091D5 !important;
 }

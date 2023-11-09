@@ -357,7 +357,7 @@ const UserLastDataNews = () => {
       doc.text(`${stationName} qurilmaning bugungi ma'lumotlar`, 20, 10);
 
       doc.autoTable({
-        theme: "grid",
+        theme: "striped",
         columns: [
           { header: "Sath (sm)", dataKey: "level" },
           { header: "Hajm (m³/s)", dataKey: "volume" },
@@ -365,6 +365,8 @@ const UserLastDataNews = () => {
           { header: "Sana", dataKey: "date" },
         ],
         body: todayData,
+        headStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
+        bodyStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
       });
 
       if (todayData.length > 0) {
@@ -374,13 +376,15 @@ const UserLastDataNews = () => {
       doc.text(`${stationName} qurilmaning kunlik ma'lumotlar`, 20, 10);
 
       doc.autoTable({
-        theme: "grid",
+        theme: "striped",
         columns: [
           { header: "Sath (sm)", dataKey: "level" },
           { header: "Hajm (m³/s)", dataKey: "volume" },
           { header: "Oy", dataKey: "date" },
         ],
         body: dailyData,
+        headStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
+        bodyStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
       });
 
       if (dailyData.length > 0) {
@@ -390,13 +394,15 @@ const UserLastDataNews = () => {
       doc.text(`${stationName} qurilmaning oylik ma'lumotlar`, 20, 10);
 
       doc.autoTable({
-        theme: "grid",
+        theme: "striped",
         columns: [
           { header: "Sath (sm)", dataKey: "level" },
           { header: "Hajm (m³/s)", dataKey: "volume" },
           { header: "Oy", dataKey: "monthNumber" },
         ],
         body: monthData,
+        headStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
+        bodyStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
       });
 
       if (monthData.length > 0) {
@@ -406,7 +412,7 @@ const UserLastDataNews = () => {
       doc.text(`${stationName} qurilmaning kecha kelgan ma'lumotlar`, 20, 10);
 
       doc.autoTable({
-        theme: "grid",
+        theme: "striped",
         columns: [
           { header: "Sath (sm)", dataKey: "level" },
           { header: "Hajm (m³/s)", dataKey: "volume" },
@@ -414,6 +420,8 @@ const UserLastDataNews = () => {
           { header: "Sana", dataKey: "date" },
         ],
         body: yesterdayData,
+        headStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
+        bodyStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
       });
 
       if (yesterdayData.length > 0) {
@@ -423,7 +431,7 @@ const UserLastDataNews = () => {
       doc.text(`${stationName} ning ma'lumotlari`, 20, 10);
 
       doc.autoTable({
-        theme: "grid",
+        theme: "striped",
         columns: [
           { header: "Sath (sm)", dataKey: "level" },
           { header: "Hajm (m³/s)", dataKey: "volume" },
@@ -431,6 +439,8 @@ const UserLastDataNews = () => {
           { header: "Sana", dataKey: "date" },
         ],
         body: searchBetweenData,
+        headStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
+        bodyStyles: { lineWidth: 0.3, lineColor: [0, 0, 0] },
       });
 
       if (searchBetweenData.length > 0) {
@@ -744,7 +754,7 @@ const UserLastDataNews = () => {
                                 </p>{" "}
                                 <span className="infowindow-span">
                                   {Number(todayData[0].volume).toFixed(2)}{" "}
-                                  (m³/s)
+                                  m³/s
                                 </span>
                               </div>
 
@@ -830,7 +840,7 @@ const UserLastDataNews = () => {
                                 </p>{" "}
                                 <span className="infowindow-span">
                                   {Number(monthData[0].volume).toFixed(2)}{" "}
-                                  (m³/s)
+                                  m³/s
                                 </span>
                               </div>
 
@@ -903,7 +913,7 @@ const UserLastDataNews = () => {
                                 </p>{" "}
                                 <span className="infowindow-span">
                                   {Number(dailyData[0].volume).toFixed(2)}{" "}
-                                  (m³/s)
+                                  m³/s
                                 </span>
                               </div>
 
@@ -979,7 +989,7 @@ const UserLastDataNews = () => {
                                   {Number(
                                     searchBetweenData[0].volume
                                   ).toFixed(2)}{" "}
-                                (m³/s)
+                                m³/s
                                 </span>
                               </div>
 
@@ -1067,7 +1077,7 @@ const UserLastDataNews = () => {
                                   {Number(
                                     yesterdayData[0].volume
                                   ).toFixed(2)}{" "}
-                               (m³/s)
+                               m³/s
                                 </span>
                               </div>
 
@@ -1438,18 +1448,19 @@ const UserLastDataNews = () => {
                           <tr>
                             <th scope="col">Vaqt</th>
                             <th scope="col">Sath (sm)</th>
-                            <th scope="col">Sho'rlanish (g/l) </th>
-                            <th scope="col">Temperatura (°C)</th>
+                            <th scope="col">Hajm (m³/s)</th>
+                            <th scope="col">Tuzatish</th>
                           </tr>
                         </thead>
                         <tbody>
+                          {console.log(yesterdayData)}
                           {yesterdayData.map((e, i) => {
                             return (
                               <tr key={i}>
                                 <td>{e.date.split(" ")[1]}</td>
                                 <td>{Number(e.level).toFixed(2)}</td>
-                                <td>{Number(e.conductivity).toFixed(2)}</td>
-                                <td>{Number(e.temp).toFixed(2)}</td>
+                                <td>{Number(e.volume).toFixed(2)}</td>
+                                <td>{Number(e.correction)}</td>
                               </tr>
                             );
                           })}

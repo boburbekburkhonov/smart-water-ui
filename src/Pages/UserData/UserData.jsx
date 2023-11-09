@@ -258,7 +258,6 @@ const UserData = () => {
             lastData.push(e);
             lastDataMain.push(e);
           });
-          console.log(requestLastData.data.data);
           setLastDataLength(lastData.length);
           page++;
         } else  {
@@ -1865,7 +1864,10 @@ const UserData = () => {
                     className="tab-pane tab-pane-hour fade profile-users"
                     id="profile-users"
                   >
-                    <div className="containerr">
+                    {
+                      dailyData.length > 0
+                      ?
+                      <div className="containerr">
                       <div className="user-data-hour-wrapper">
                         <div className="d-flex justify-content-between align-items-center">
                           <input
@@ -2013,6 +2015,11 @@ const UserData = () => {
                         />
                       </div>
                     </div>
+                      :
+                      <div className="d-flex align-items-center justify-content-center hour-spinner-wrapper">
+                        <span className="loader"></span>
+                      </div>
+                    }
                   </div>
 
                   {/* MONTHLY */}
@@ -2020,7 +2027,10 @@ const UserData = () => {
                     className="tab-pane tab-pane-hour fade profile-overview"
                     id="profile-overview"
                   >
-                    <div className="containerr">
+                    {
+                      monthlyData.length > 0
+                      ?
+                      <div className="containerr">
                       <div className="user-data-hour-wrapper">
                         <div className="d-flex justify-content-between align-items-center">
                           <input
@@ -2146,6 +2156,11 @@ const UserData = () => {
                         />
                       </div>
                     </div>
+                      :
+                      <div className="d-flex align-items-center justify-content-center hour-spinner-wrapper">
+                        <span className="loader"></span>
+                      </div>
+                    }
                   </div>
                   {/* LAST DATA */}
                   <div>
