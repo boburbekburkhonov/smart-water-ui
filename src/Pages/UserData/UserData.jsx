@@ -461,22 +461,30 @@ const UserData = () => {
       const search = todayDataMain.filter((e) =>
         e.name.toLowerCase().includes(inputValue)
       );
-      setTodayData(search);
+      if(search.length > 0){
+        setTodayData(search);
+      }
     } else if (whichData == "yesterday") {
       const search = yesterdayDataMain.filter((e) =>
         e.name.toLowerCase().includes(inputValue)
       );
-      setYesterdayData(search);
+      if(search.length > 0){
+        setYesterdayData(search);
+      }
     } else if (whichData == "daily") {
       const search = dailydayDataMain.filter((e) =>
         e.name.toLowerCase().includes(inputValue)
       );
-      setDailyData(search);
+      if(search.length > 0){
+        setDailyData(search);
+      }
     } else if (whichData == "monthly") {
       const search = monthlydayDataMain.filter((e) =>
         e.name.toLowerCase().includes(inputValue)
       );
-      setMonthlyData(search);
+      if(search.length > 0){
+        setMonthlyData(search);
+      }
     }
   };
 

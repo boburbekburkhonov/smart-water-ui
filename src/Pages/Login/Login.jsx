@@ -126,14 +126,14 @@ const Login = () => {
                   </div>
               <form id="stripe-login" onSubmit={loginUser}>
                 <div className="field padding-bottom--24">
-                  <label htmlFor="email" className='fs-5'>Username</label>
-                  <input type="text" name="username" placeholder='username' required />
+                  <label htmlFor="username" className='fs-5'>Username</label>
+                  <input type="text" id='username' name="username" placeholder='username' required />
                 </div>
                 <div className="field padding-bottom--24">
                   <div className="grid--50-50">
                     <label htmlFor="password" className='fs-5'>Password</label>
                   </div>
-                  <input type="password" name="password" placeholder='password' required />
+                  <input type="password" id='password' name="password" placeholder='password' required />
                 </div>
                 <div className="field field-checkbox  flex-flex align-center">
                   <label htmlFor="checkbox">
