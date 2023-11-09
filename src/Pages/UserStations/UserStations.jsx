@@ -183,7 +183,7 @@ const UserStations = () => {
 
     // * REGION NAME
     const requestRegionName = await customFetch.get(
-      `/regions/getById?id=${requestStationOne.data?.data.data[0]?.region_id}`
+      `/regions/${requestStationOne.data?.data.data[0]?.region_id}`
     );
 
     setStationRegionName(requestRegionName.data.region.name);
@@ -565,7 +565,7 @@ const UserStations = () => {
                           <img src={circle} alt="name" width={20} height={20} />
                           <p className="m-0 ms-4">Status:</p>
                           <p className="m-0 ms-2 fw-semibold">
-                            {stationOne?.status}
+                            {stationOne?.status == 1 ? "ishlayapti" : "ishlamayapti"}
                           </p>
                         </div>
 
@@ -634,6 +634,7 @@ const UserStations = () => {
                     </li>
                   </ul>
                   <div className="tab-content pt-4">
+                    {/* ALL STATION */}
                     <div
                       className="tab-pane fade show active profile-users table-scroll"
                       id="profile-users"
@@ -660,13 +661,13 @@ const UserStations = () => {
                           <option value="all">All</option>
                         </select>
 
-                        <button className="btn btn-primary bg-btn">
+                        <button className="btn btn-primary bg-btn main-background-color">
                           Qidirish
                         </button>
                       </form>
 
                       <div
-                        className="d-flex align-items-center justify-content-end cursor-pointer"
+                        className="d-flex align-items-center justify-content-end cursor-pointer ms-auto user-station-save"
                         onClick={() => exportDataToExcel()}
                       >
                         <p className="m-0 p-0 user-station-save-data-desc">
@@ -727,7 +728,7 @@ const UserStations = () => {
                                     {e.imel}
                                   </td>
                                   <td className="c-table__cell text-center">
-                                    {e.status}
+                                    {e.status == '1' ? "ishlayapti" : "ishlamayapti"}
                                   </td>
                                   <td className="c-table__cell text-center">
                                     {e.temperture}
@@ -813,13 +814,13 @@ const UserStations = () => {
                             onChange={(e) => setMaximumValue(e.target.value)}
                           />
                         </div>
-                        <button className="btn btn-primary bg-btn">
+                        <button className="btn btn-primary bg-btn main-background-color">
                           Qidirish
                         </button>
                       </form>
 
                       <div
-                        className="text-end d-flex align-items-center justify-content-end cursor-pointer"
+                        className="text-end d-flex align-items-center justify-content-end cursor-pointer ms-auto user-station-save"
                         onClick={() => exportDataToExcel()}
                       >
                         <p className="m-0 p-0 user-station-save-data-desc">
@@ -836,25 +837,25 @@ const UserStations = () => {
                           Hozircha bunday stansiya yo'q...
                         </h3>
                       ) : (
-                        <table className="c-table mt-4">
-                          <thead className="c-table__header">
+                        <table className="c-table mt-4 w-10 0 table table-striped table-hover">
+                          <thead className="c-table__header main-background-color">
                             <tr>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Nomi
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Imei
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Status
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Temperatura
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Batareya
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Signal
                               </th>
                             </tr>
@@ -878,7 +879,7 @@ const UserStations = () => {
                                     {e.imel}
                                   </td>
                                   <td className="c-table__cell text-center">
-                                    {e.status}
+                                    {e.status == '1' ? "ishlayapti" : "ishlamayapti"}
                                   </td>
                                   <td className="c-table__cell text-center">
                                     {e.temperture}
@@ -926,7 +927,7 @@ const UserStations = () => {
                       </h3>
 
                       <div
-                        className="text-end d-flex align-items-center justify-content-end cursor-pointer"
+                        className="text-end d-flex align-items-center justify-content-end cursor-pointer ms-auto user-station-save"
                         onClick={() => exportDataToExcel()}
                       >
                         <p className="m-0 p-0 user-station-save-data-desc">
@@ -941,22 +942,22 @@ const UserStations = () => {
                           Hozircha bunday stansiya yo'q...
                         </h3>
                       ) : (
-                        <table className="c-table mt-4">
-                          <thead className="c-table__header">
+                        <table className="c-table mt-4  w-10 0 table table-striped table-hover">
+                          <thead className="c-table__header main-background-color">
                             <tr>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Nomi
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Imei
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Status
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Temperatura
                               </th>
-                              <th className="c-table__col-label text-center">
+                              <th className="c-table__col-label text-center text-light">
                                 Batareya
                               </th>
                               <th className="c-table__col-label text-center">
@@ -983,7 +984,7 @@ const UserStations = () => {
                                     {e.imel}
                                   </td>
                                   <td className="c-table__cell text-center">
-                                    {e.status}
+                                    {e.status  == '1' ? "ishlayapti" : "ishlamayapti"}
                                   </td>
                                   <td className="c-table__cell text-center">
                                     {e.temperture}

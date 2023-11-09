@@ -267,6 +267,7 @@ a.ssolink {
 .main-background-color {
   background: #0091D5 !important;
   color: #ffffff !important;
+  border: none;
 }
 
 .formbg {

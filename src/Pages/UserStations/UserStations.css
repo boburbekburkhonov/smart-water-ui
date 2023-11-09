@@ -156,3 +156,8 @@
   background-color: #0091D5;
   padding: 18px 6px 18px 12px;
 }
+
+.user-station-save {
+  max-width: 220px;
+   width: 100%;
+}
