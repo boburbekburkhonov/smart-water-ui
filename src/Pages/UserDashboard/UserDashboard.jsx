@@ -167,7 +167,6 @@ const UserDashboard = (prop) => {
         )
         .then((data) => {
           setViewStation(data.data.data)
-          console.log(data.data.data);
         });
 
       // ! LIMIT
@@ -311,7 +310,6 @@ const UserDashboard = (prop) => {
       customFetch.get(
         `/last-data/getGreaterAndLessByStations?great=0&page=1&perPage=10&less=25`)
         .then((data) => {
-          console.log(data.data.data.data);
           setViewStationByCharLimit(data.data.data.data)
         });
 

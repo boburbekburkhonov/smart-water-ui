@@ -1453,7 +1453,6 @@ const UserLastDataNews = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {console.log(yesterdayData)}
                           {yesterdayData.map((e, i) => {
                             return (
                               <tr key={i}>
