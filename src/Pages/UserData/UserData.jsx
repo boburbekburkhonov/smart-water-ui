@@ -1637,7 +1637,7 @@ const UserData = () => {
                               </div>
                             ) : (
                               <table
-                                className="table-style"
+                                className="table-style" 
                                 id="table-style-hour-id"
                               >
                                 <thead className="">

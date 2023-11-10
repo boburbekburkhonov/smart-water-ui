@@ -786,6 +786,23 @@ const UserDashboard = (prop) => {
                   </h1>
                 </div>
 
+                <ol className="list-unstyled">
+                  <li>
+                      <button className="btn btn-danger sort-dashboard-btn">
+                        All
+                      </button>
+                      <button className="btn btn-danger sort-dashboard-btn ms-3">
+                        Lorem, ipsum.
+                      </button>
+                      <button className="btn btn-danger sort-dashboard-btn ms-3">
+                        Lorem
+                      </button>
+                      <button className="btn btn-danger sort-dashboard-btn ms-3">
+                        dolor.
+                      </button>
+                  </li>
+                </ol>
+
                 <ul className="dashboard-list list-unstyled m-0 d-flex flex-wrap align-items-center justify-content-between">
                   {stationStatistic?.totalStationsCount > 0 ? (
                     <li
