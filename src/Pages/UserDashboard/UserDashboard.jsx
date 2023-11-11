@@ -8,14 +8,18 @@ import circleOrange from "../../assets/images/circle-orange.png";
 import circleRed from "../../assets/images/circle-red.png";
 import circleYellow from "../../assets/images/circle-yellow.png";
 import fullScreen from "../../assets/images/fullscreen.png";
+import all from "../../assets/images/all.png";
+import active from "../../assets/images/active.png";
+import passive from "../../assets/images/passive.png";
 import { useEffect } from "react";
 import { api } from "../Api/Api";
 import { useState } from "react";
 import excel from "../../assets/images/excel.png";
 import * as XLSX from "xlsx";
 import axios from "axios";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import "./UserDashboard.css";
+import AliceCarousel from 'react-alice-carousel';
+import 'react-alice-carousel/lib/alice-carousel.css';
 
 Chartjs.register(ArcElement, Tooltip, Legend);
 
@@ -24,6 +28,10 @@ const UserDashboard = (prop) => {
   const name = window.localStorage.getItem("name");
   const role = window.localStorage.getItem("role");
   const [loader, setLoader] = useState(false);
+  const [regionName, setRegionName] = useState();
+  const [stationsCountByRegion, setStationsCountByRegion] = useState();
+  const [allBalansOrg, setAllBalansOrg] = useState([]);
+  const [balansOrgId, setBalansOrgId] = useState();
   const [dataOrStation, setDataOrStation] = useState("data");
   const [stationBattery, setStationBattery] = useState([]);
   const [stationStatistic, settationStatistic] = useState([]);
@@ -113,6 +121,12 @@ const UserDashboard = (prop) => {
     }
   );
 
+  if(role == 'Region'){
+    customFetch
+      .get(`/regions/${name}`)
+      .then((data) => setRegionName(data.data.region.name));
+  }
+
   useEffect(() => {
     const userDashboardFunc = async () => {
       // ! STATION STATISTIC
@@ -124,89 +138,167 @@ const UserDashboard = (prop) => {
 
     userDashboardFunc();
 
+    // ! STATISTIC BY BATTERY
     customFetch
       .get(`/stations/getStatisticStationsByBattery`)
       .then((data) => setStationBattery(data.data.data));
+
+    // ! STATION BY REGION
+    customFetch
+      .get(`/stations/getStationsCountByRegion?regionNumber=${name}`)
+      .then((data) => setStationsCountByRegion(data.data))
+
+    // ! ALL BALANS ORG
+    customFetch
+    .get(`/balance-organizations/all-find`)
+    .then((data) => setAllBalansOrg(data.data.balanceOrganizations))
   }, []);
 
   useEffect(() => {
-    if (whichStation == "allStation") {
-      customFetch
-        .get(
-          `last-data/getLastData?page=1&perPage=${stationStatistic?.totalStationsCount}`
-        )
-        .then((data) => {
-          role == "USER"
-            ? setViewStation(data.data.data)
-            : setViewStation(data.data.data);
-        });
+    if(balansOrgId == undefined){
+      if (whichStation == "allStation") {
+        customFetch
+          .get(
+            `last-data/getLastData?page=1&perPage=${stationStatistic?.totalStationsCount}`
+          )
+          .then((data) => setViewStation(data.data.data));
 
-      // ! LIMIT
-      customFetch
-        .get(`/last-data/getLastData?page=1&perPage=8`)
-        .then((data) => {
-          role == "USER"
-            ? setViewStationLimit(data.data.data)
-            : setViewStationLimit(data.data.data);
-        });
-    } else if (whichStation == "todayStation") {
-      customFetch
-        .get(
-          `/last-data/todayWorkStations?page=1&perPage=${stationStatistic?.totalTodayWorkStationsCount}`
-        )
-        .then((data) => setViewStation(data.data.data));
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/getLastData?page=1&perPage=8`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "todayStation") {
+        customFetch
+          .get(
+            `/last-data/todayWorkStations?page=1&perPage=${stationStatistic?.totalTodayWorkStationsCount}`
+          )
+          .then((data) => setViewStation(data.data.data));
 
-      // ! LIMIT
-      customFetch
-        .get(`/last-data/todayWorkStations?page=1&perPage=8`)
-        .then((data) => setViewStationLimit(data.data.data));
-    } else if (whichStation == "withinThreeDayStation") {
-      customFetch
-        .get(
-          `/last-data/treeDayWorkStations?page=1&perPage=${stationStatistic?.totalThreeDayWorkStationsCount}`
-        )
-        .then((data) => {
-          setViewStation(data.data.data)
-        });
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/todayWorkStations?page=1&perPage=8`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "withinThreeDayStation") {
+        customFetch
+          .get(
+            `/last-data/treeDayWorkStations?page=1&perPage=${stationStatistic?.totalThreeDayWorkStationsCount}`
+          )
+          .then((data) => {
+            setViewStation(data.data.data)
+          });
 
-      // ! LIMIT
+        // ! LIMIT
 
-      customFetch
-        .get(`${api}/last-data/treeDayWorkStations?page=1&perPage=8`)
-        .then((data) => setViewStationLimit(data.data.data));
-    } else if (whichStation == "totalMonthWorkStation") {
-      customFetch
-        .get(
-          `/last-data/lastMonthWorkStations?page=1&perPage=${stationStatistic?.totalMonthWorkStationsCount}`
-        )
-        .then((data) => setViewStation(data.data.data));
+        customFetch
+          .get(`${api}/last-data/treeDayWorkStations?page=1&perPage=8`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "totalMonthWorkStation") {
+        customFetch
+          .get(
+            `/last-data/lastMonthWorkStations?page=1&perPage=${stationStatistic?.totalMonthWorkStationsCount}`
+          )
+          .then((data) => setViewStation(data.data.data));
 
-      // ! LIMIT
-      customFetch
-        .get(`/last-data/lastMonthWorkStations?page=1&perPage=8`)
-        .then((data) => setViewStationLimit(data.data.data));
-    } else if (whichStation == "totalMoreWorkStations") {
-      customFetch
-        .get(
-          `/last-data/moreWorkStations?page=1&perPage=${stationStatistic?.totalMoreWorkStationsCount}`
-        )
-        .then((data) => setViewStation(data.data.data));
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/lastMonthWorkStations?page=1&perPage=8`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "totalMoreWorkStations") {
+        customFetch
+          .get(
+            `/last-data/moreWorkStations?page=1&perPage=${stationStatistic?.totalMoreWorkStationsCount}`
+          )
+          .then((data) => setViewStation(data.data.data));
 
-      // ! LIMIT
-      customFetch
-        .get(`/last-data/moreWorkStations?page=1&perPage=8`)
-        .then((data) => setViewStationLimit(data.data.data));
-    } else if (whichStation == "notWorkStation") {
-      customFetch
-        .get(
-          `/last-data/notWorkStations?page=1&perPage=${stationStatistic?.totalNotDataStationsCount}`
-        )
-        .then((data) => setViewStation(data.data.data));
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/moreWorkStations?page=1&perPage=8`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "notWorkStation") {
+        customFetch
+          .get(
+            `/last-data/notWorkStations?page=1&perPage=${stationStatistic?.totalNotDataStationsCount}`
+          )
+          .then((data) => setViewStation(data.data.data));
 
-      // ! LIMIT
-      customFetch
-        .get(`${api}/last-data/notWorkStations?page=1&perPage=8`)
-        .then((data) => setViewStationLimit(data.data.data));
+        // ! LIMIT
+        customFetch
+          .get(`${api}/last-data/notWorkStations?page=1&perPage=8`)
+          .then((data) => setViewStationLimit(data.data.data));
+      }
+    }else {
+      if (whichStation == "allStation") {
+        customFetch
+          .get(
+            `/last-data/getLastDataByOrganization?page=1&perPage=${stationStatistic?.totalStationsCount}&organization=${balansOrgId}`
+          )
+          .then((data) => {
+            setViewStation(data.data.data);
+          });
+
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/getLastDataByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
+          .then((data) => setViewStationLimit(data.data.data)
+          );
+      } else if (whichStation == "todayStation") {
+        customFetch
+          .get(
+            `/last-data/todayWorkStationsByOrganization?page=1&perPage=${stationStatistic?.totalTodayWorkStationsCount}&organization=${balansOrgId}`
+          )
+          .then((data) => setViewStation(data.data.data));
+
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/todayWorkStationsByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "withinThreeDayStation") {
+        customFetch
+          .get(
+            `/last-data/treeDayWorkStationsByOrganization?page=1&perPage=${stationStatistic?.totalThreeDayWorkStationsCount}&organization=${balansOrgId}`
+          )
+          .then((data) => {
+            setViewStation(data.data.data)
+          });
+
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/treeDayWorkStationsByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "totalMonthWorkStation") {
+        customFetch
+          .get(
+            `/last-data/lastMonthWorkStationsByOrganization?page=1&perPage=${stationStatistic?.totalMonthWorkStationsCount}&organization=${balansOrgId}`
+          )
+          .then((data) => setViewStation(data.data.data));
+
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/lastMonthWorkStationsByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "totalMoreWorkStations") {
+        customFetch
+          .get(
+            `/last-data/moreWorkStationsByOrganization?page=1&perPage=${stationStatistic?.totalMoreWorkStationsCount}&organization=${balansOrgId}`
+          )
+          .then((data) => setViewStation(data.data.data));
+
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/moreWorkStationsByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
+          .then((data) => setViewStationLimit(data.data.data));
+      } else if (whichStation == "notWorkStation") {
+        customFetch
+          .get(
+            `/last-data/notWorkStationsByOrganization?page=1&perPage=${stationStatistic?.totalNotDataStationsCount}&organization=${balansOrgId}`
+          )
+          .then((data) => setViewStation(data.data.data));
+
+        // ! LIMIT
+        customFetch
+          .get(`/last-data/notWorkStationsByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
+          .then((data) => setViewStationLimit(data.data.data));
+      }
     }
   }, [stationStatistic, whichStation]);
 
@@ -416,7 +508,9 @@ const UserDashboard = (prop) => {
       if (viewStation.length > 0) {
         XLSX.writeFile(
           workBook,
-          `${role == 'USER' ? name : balanceOrgName} ning ${tableTitle} ${resultDate}.xlsx`
+          `${role == 'USER' ? name
+          : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}`
+          : balanceOrgName}ning ${tableTitle} ${resultDate}.xlsx`
         );
       }
     } else if (dataOrStation == "station") {
@@ -503,6 +597,61 @@ const UserDashboard = (prop) => {
       setLoader(false);
     }, 500);
   };
+
+  const foundBalansOrgName = id => {
+    const foundBalansOrg = allBalansOrg.find(i => i.id == id)
+
+    return foundBalansOrg?.name
+  }
+
+  const responsive = {
+    0: { items: 1 },
+    820: { items: 2 },
+    1100: { items: 3 },
+    1400: { items: 5 },
+    2000: { items: 5 },
+  };
+
+  const getStationStatisByBalansOrg = id => {
+    // ! STATISTIC STATION BY BALANS ORG
+    if(id == undefined){
+      customFetch
+      .get(`/last-data/getStatisticStations`)
+      .then((data) => settationStatistic(data.data.data));
+    }else {
+      customFetch
+      .get(`/last-data/getStatisticStationsByOrganization?organization=${id}`)
+      .then((data) => settationStatistic(data.data.data));
+    }
+
+  }
+
+  const items = stationsCountByRegion?.gruopOrganization.map((e, i) => {
+    return  <div className="sort-dashboard-list-item ms-3" onClick={(s) => {
+      setBalansOrgId(e.balance_organization_id)
+      getStationStatisByBalansOrg(e.balance_organization_id)
+      setWhichStation('allStation')
+    }}>
+       <div className="sort-dashboard-wrapper">
+       <h6>
+       {
+         foundBalansOrgName(e.balance_organization_id)
+       } {" "}
+       </h6>
+       <div className="d-flex flex-column justify-content-end">
+         <div className="d-flex align-items-center m-0">
+           <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{e.countStations} ta</span>
+         </div>
+         <div className="d-flex align-items-center m-0">
+           <img src={active} alt="active" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{e.countWorkStations} ta</span>
+         </div>
+         <div className="d-flex align-items-center m-0">
+           <img src={passive} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{e.countNotWorkStations} ta</span>
+         </div>
+       </div>
+     </div>
+     </div>
+  });
 
   return (
     <section className="home-section p-0">
@@ -779,239 +928,491 @@ const UserDashboard = (prop) => {
             <div className="container-fluid p-0">
               <div className="user-dashboard-top-wrapper">
                 <div className="d-flex align-items-center mb-3 pt-3">
-                  <h1 className="dashboard-heading ms-2">
-                    {balanceOrg.length == 0
-                      ? `${name} ga biriktirilgan qurilmalar`
-                      : `${balanceOrgName} ga biriktirilgan qurilmalar`}
-                  </h1>
-                </div>
-
-                <ol className="list-unstyled">
-                  <li>
-                      <button className="btn btn-danger sort-dashboard-btn">
-                        All
-                      </button>
-                      <button className="btn btn-danger sort-dashboard-btn ms-3">
-                        Lorem, ipsum.
-                      </button>
-                      <button className="btn btn-danger sort-dashboard-btn ms-3">
-                        Lorem
-                      </button>
-                      <button className="btn btn-danger sort-dashboard-btn ms-3">
-                        dolor.
-                      </button>
-                  </li>
-                </ol>
-
-                <ul className="dashboard-list list-unstyled m-0 d-flex flex-wrap align-items-center justify-content-between">
-                  {stationStatistic?.totalStationsCount > 0 ? (
-                    <li
-                      className="dashboard-list-item mt-3 d-flex"
-                      onClick={() => {
+                  {
+                    role == 'Region'
+                    ?
+                    <div className="w-100 d-flex align-items-center justify-content-between">
+                      <h1 className="dashboard-heading ms-2 dashboard-heading-role">
+                      {regionName}ga tegishli balans tashkilotlar
+                      </h1>
+                      <div className="reigon-heading-statis-wrapper d-flex cursor" onClick={() => {
+                        setBalansOrgId(undefined)
+                        getStationStatisByBalansOrg()
                         setWhichStation("allStation");
-                        setTableTitle("Umumiy stansiyalar soni");
-                        setDataOrStation("data");
-                        loaderFunc();
-                      }}
-                    >
-                      <img
-                        src={circleBlue}
-                        alt="circleBlue"
-                        width={30}
-                        height={30}
-                      />
-                      <div className="ms-2">
-                        <p className="dashboard-list-number m-0">
-                          {stationStatistic?.totalStationsCount} ta
-                        </p>
-                        <p className="dashboard-list-desc m-0">
-                          Umumiy stansiyalar soni
-                        </p>
-                        <p className="dashboard-list-desc-percentage text-info m-0 text-end">
-                          100%
-                        </p>
+                      }}>
+                        <div className="d-flex align-items-center m-0">
+                        <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countStationsByRegion} ta</span>
+                        </div>
+                        <div className="d-flex align-items-center m-0">
+                        <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsRegion} ta</span>
+                        </div>
+                        <div className="d-flex align-items-center m-0">
+                        <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countNotWorkingStationsRegion} ta</span>
                       </div>
-                    </li>
-                  ) : null}
+                    </div>
+                    </div>
+                    :
+                    <h1 className="dashboard-heading ms-2">
+                      {balanceOrg.length > 0
+                      ? `${balanceOrgName} ga biriktirilgan qurilmalar`
+                      : `${name} ga biriktirilgan qurilmalar`}
+                    </h1>
+                  }
+                </div>
+                {
+                  role == 'Region'
+                  ?
+                  <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
+                    <AliceCarousel
+                      // autoPlay={true}
+                      infinite={true}
+                      autoPlayStrategy="all"
+                      responsive={responsive}
+                      disableButtonsControls={true}
+                      animationDuration="900"
+                      autoPlayInterval={1000}
+                      // paddingLeft={40}
+                      mouseTracking
+                      items={items}
+                      />
+                  </ol>
+                :
+                null
+                }
 
-                  {stationStatistic?.totalTodayWorkStationsCount > 0 ? (
-                    <li
-                      className="dashboard-list-item d-flex mt-3"
-                      onClick={() => {
-                        setWhichStation("todayStation");
-                        setTableTitle("Bugun ishlayotganlar stansiyalar");
-                        setDataOrStation("data");
-                        loaderFunc();
-                      }}
-                    >
-                      <img
-                        src={circleGreen}
-                        alt="circleGreen"
-                        width={30}
-                        height={30}
-                      />
-                      <div className="ms-2">
-                        <p className="dashboard-list-number m-0">
-                          {stationStatistic?.totalTodayWorkStationsCount} ta
-                        </p>
-                        <p className="dashboard-list-desc m-0">
-                          Bugun ishlayotganlar stansiyalar
-                        </p>
-                        <p className="dashboard-list-desc-percentage text-info m-0 text-end">
-                          {(
-                            (stationStatistic?.totalTodayWorkStationsCount *
-                              100) /
-                            stationStatistic?.totalStationsCount
-                          ).toFixed()}
-                          %
-                        </p>
-                      </div>
-                    </li>
-                  ) : null}
+                {
+                  role != 'Region'
+                  ?
+                    <ul className="list-unstyled m-0 d-flex flex-wrap align-items-center justify-content-between">
+                      {stationStatistic?.totalStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("allStation");
+                            setTableTitle("Umumiy stansiyalar soni");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleBlue}
+                            alt="circleBlue"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Umumiy stansiyalar soni
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              100%
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
 
-                  {stationStatistic?.totalThreeDayWorkStationsCount > 0 ? (
-                    <li
-                      className="dashboard-list-item mt-3 d-flex"
-                      onClick={() => {
-                        setWhichStation("withinThreeDayStation");
-                        setTableTitle("3 kun ichida ishlagan stansiyalar");
-                        setDataOrStation("data");
-                        loaderFunc();
-                      }}
-                    >
-                      <img
-                        src={circleGreenBlue}
-                        alt="circleGreen"
-                        width={30}
-                        height={30}
-                      />
-                      <div className="ms-2">
-                        <p className="dashboard-list-number m-0">
-                          {stationStatistic?.totalThreeDayWorkStationsCount} ta
-                        </p>
-                        <p className="dashboard-list-desc m-0">
-                          3 kun ichida ishlagan stansiyalar
-                        </p>
-                        <p className="dashboard-list-desc-percentage text-info m-0 text-end">
-                          {(
-                            (stationStatistic?.totalThreeDayWorkStationsCount *
-                              100) /
-                            stationStatistic?.totalStationsCount
-                          ).toFixed()}
-                          %
-                        </p>
-                      </div>
-                    </li>
-                  ) : null}
+                      {stationStatistic?.totalTodayWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item d-flex mt-3"
+                          onClick={() => {
+                            setWhichStation("todayStation");
+                            setTableTitle("Bugun ishlayotganlar stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleGreen}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalTodayWorkStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Bugun ishlayotganlar stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalTodayWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
 
-                  {stationStatistic?.totalMonthWorkStationsCount > 0 ? (
-                    <li
-                      className="dashboard-list-item mt-3 d-flex"
-                      onClick={() => {
-                        setWhichStation("totalMonthWorkStation");
-                        setTableTitle("Oxirgi oy ishlagan stansiyalar");
-                        setDataOrStation("data");
-                        loaderFunc();
-                      }}
-                    >
-                      <img
-                        src={circleYellow}
-                        alt="circleGreen"
-                        width={30}
-                        height={30}
-                      />
-                      <div className="ms-2">
-                        <p className="dashboard-list-number m-0">
-                          {stationStatistic?.totalMonthWorkStationsCount}
-                          ta
-                        </p>
-                        <p className="dashboard-list-desc m-0">
-                          Oxirgi oy ishlagan stansiyalar
-                        </p>
-                        <p className="dashboard-list-desc-percentage text-info m-0 text-end">
-                          {(
-                            (stationStatistic?.totalMonthWorkStationsCount *
-                              100) /
-                            stationStatistic?.totalStationsCount
-                          ).toFixed()}
-                          %
-                        </p>
-                      </div>
-                    </li>
-                  ) : null}
+                      {stationStatistic?.totalThreeDayWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("withinThreeDayStation");
+                            setTableTitle("3 kun ichida ishlagan stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleGreenBlue}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalThreeDayWorkStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              3 kun ichida ishlagan stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalThreeDayWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
 
-                  {stationStatistic?.totalMoreWorkStationsCount > 0 ? (
-                    <li
-                      className="dashboard-list-item mt-3 d-flex"
-                      onClick={() => {
-                        setWhichStation("totalMoreWorkStations");
-                        setTableTitle("Uzoq vaqt ishlamagan qurilmalar");
-                        setDataOrStation("data");
-                        loaderFunc();
-                      }}
-                    >
-                      <img
-                        src={circleOrange}
-                        alt="circleGreen"
-                        width={30}
-                        height={30}
-                      />
-                      <div className="ms-2">
-                        <p className="dashboard-list-number m-0">
-                          {stationStatistic?.totalMoreWorkStationsCount}
-                          ta
-                        </p>
-                        <p className="dashboard-list-desc m-0">
-                          Uzoq vaqt ishlamagan qurilmalar
-                        </p>
-                        <p className="dashboard-list-desc-percentage text-info m-0 text-end">
-                          {(
-                            (stationStatistic?.totalMoreWorkStationsCount *
-                              100) /
-                            stationStatistic?.totalStationsCount
-                          ).toFixed()}
-                          %
-                        </p>
-                      </div>
-                    </li>
-                  ) : null}
+                      {stationStatistic?.totalMonthWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("totalMonthWorkStation");
+                            setTableTitle("Oxirgi oy ishlagan stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleYellow}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalMonthWorkStationsCount}
+                              ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Oxirgi oy ishlagan stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalMonthWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
 
-                  {stationStatistic?.totalNotDataStationsCount > 0 ? (
-                    <li
-                      className="dashboard-list-item mt-3 d-flex"
-                      onClick={() => {
-                        setWhichStation("notWorkStation");
-                        setTableTitle("Umuman ishlamagan stansiyalar");
-                        setDataOrStation("data");
-                        loaderFunc();
-                      }}
-                    >
-                      <img
-                        src={circleRed}
-                        alt="circleGreen"
-                        width={30}
-                        height={30}
-                      />
-                      <div className="ms-2">
-                        <p className="dashboard-list-number m-0">
-                          {stationStatistic?.totalNotDataStationsCount} ta
-                        </p>
-                        <p className="dashboard-list-desc m-0">
-                          Umuman ishlamagan stansiyalar
-                        </p>
-                        <p className="dashboard-list-desc-percentage text-info m-0 text-end">
-                          {(
-                            (stationStatistic?.totalNotDataStationsCount *
-                              100) /
-                            stationStatistic?.totalStationsCount
-                          ).toFixed()}
-                          %
-                        </p>
-                      </div>
-                    </li>
-                  ) : null}
-                </ul>
+                      {stationStatistic?.totalMoreWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("totalMoreWorkStations");
+                            setTableTitle("Uzoq vaqt ishlamagan qurilmalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleOrange}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalMoreWorkStationsCount}
+                              ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Uzoq vaqt ishlamagan qurilmalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalMoreWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+
+                      {stationStatistic?.totalNotDataStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("notWorkStation");
+                            setTableTitle("Umuman ishlamagan stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleRed}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalNotDataStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Umuman ishlamagan stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalNotDataStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+                    </ul>
+                  : null
+                }
               </div>
+
+                {
+                  role == 'Region'
+                  ?
+                  <div className="dashboard-list pt-4">
+                    <h3>
+                    {regionName} balans tashkilotlari statistikasi
+                    </h3>
+                    <ul className="list-unstyled m-0 d-flex flex-wrap align-items-center justify-content-between">
+                      {stationStatistic?.totalStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("allStation");
+                            setTableTitle("Umumiy stansiyalar soni");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleBlue}
+                            alt="circleBlue"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Umumiy stansiyalar soni
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              100%
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+
+                      {stationStatistic?.totalTodayWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item d-flex mt-3"
+                          onClick={() => {
+                            setWhichStation("todayStation");
+                            setTableTitle("Bugun ishlayotganlar stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleGreen}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalTodayWorkStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Bugun ishlayotganlar stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalTodayWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+
+                      {stationStatistic?.totalThreeDayWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("withinThreeDayStation");
+                            setTableTitle("3 kun ichida ishlagan stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleGreenBlue}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalThreeDayWorkStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              3 kun ichida ishlagan stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalThreeDayWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+
+                      {stationStatistic?.totalMonthWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("totalMonthWorkStation");
+                            setTableTitle("Oxirgi oy ishlagan stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleYellow}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalMonthWorkStationsCount}
+                              ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Oxirgi oy ishlagan stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalMonthWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+
+                      {stationStatistic?.totalMoreWorkStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("totalMoreWorkStations");
+                            setTableTitle("Uzoq vaqt ishlamagan qurilmalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleOrange}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalMoreWorkStationsCount}
+                              ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Uzoq vaqt ishlamagan qurilmalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalMoreWorkStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+
+                      {stationStatistic?.totalNotDataStationsCount > 0 ? (
+                        <li
+                          className="dashboard-list-item mt-3 d-flex"
+                          onClick={() => {
+                            setWhichStation("notWorkStation");
+                            setTableTitle("Umuman ishlamagan stansiyalar");
+                            setDataOrStation("data");
+                            loaderFunc();
+                          }}
+                        >
+                          <img
+                            src={circleRed}
+                            alt="circleGreen"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="ms-2">
+                            <p className="dashboard-list-number m-0">
+                              {stationStatistic?.totalNotDataStationsCount} ta
+                            </p>
+                            <p className="dashboard-list-desc m-0">
+                              Umuman ishlamagan stansiyalar
+                            </p>
+                            <p className="dashboard-list-desc-percentage text-info m-0 text-end">
+                              {(
+                                (stationStatistic?.totalNotDataStationsCount *
+                                  100) /
+                                stationStatistic?.totalStationsCount
+                              ).toFixed()}
+                              %
+                            </p>
+                          </div>
+                        </li>
+                      ) : null}
+                    </ul>
+                  </div>
+                : null
+                }
 
               {loader ? (
                 <div className="d-flex align-items-center justify-content-center hour-spinner-wrapper">
