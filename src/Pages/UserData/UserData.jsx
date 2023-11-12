@@ -1257,7 +1257,7 @@ const UserData = () => {
                           </div>
                         )
                       ) : whichData == "daily" ? (
-                        dailyDataStatistic.dailyData.length > 0 ? (
+                        dailyDataStatistic.dailyData?.length > 0 ? (
                           <div>
                             <h3 className="fw-semibold text-success fs-6">
                               {dailyDataStatistic.name}
@@ -1321,7 +1321,7 @@ const UserData = () => {
                         ) : (
                           <div>
                             <h3 className="fw-semibold text-success fs-6 text-center">
-                              {dailyDataStatistic.name}
+                              {dailyDataStatistic?.name}
                             </h3>
                             <div className="d-flex align-items-center justify-content-center">
                               <img
@@ -1420,7 +1420,7 @@ const UserData = () => {
                         ) : (
                           <div>
                             <h3 className="fw-semibold text-success fs-6 text-center">
-                              {yesterdayDataStatistic.name}
+                              {yesterdayDataStatistic?.name}
                             </h3>
                             <div className="d-flex align-items-center justify-content-center">
                               <img
@@ -1637,7 +1637,7 @@ const UserData = () => {
                               </div>
                             ) : (
                               <table
-                                className="table-style" 
+                                className="table-style"
                                 id="table-style-hour-id"
                               >
                                 <thead className="">

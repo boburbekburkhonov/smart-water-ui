@@ -199,3 +199,9 @@ td {
 			transform: rotate(360deg);
 	}
 	}
+
+/* ! MAP POSITION */
+.gm-style-iw {
+	margin-left: 50px;
+	margin-top: 50px;
+}

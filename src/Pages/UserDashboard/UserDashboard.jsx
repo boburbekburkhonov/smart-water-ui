@@ -631,6 +631,7 @@ const UserDashboard = (prop) => {
       setBalansOrgId(e.balance_organization_id)
       getStationStatisByBalansOrg(e.balance_organization_id)
       setWhichStation('allStation')
+      loaderFunc()
     }}>
        <div className="sort-dashboard-wrapper">
        <h6>
@@ -935,10 +936,11 @@ const UserDashboard = (prop) => {
                       <h1 className="dashboard-heading ms-2 dashboard-heading-role">
                       {regionName}ga tegishli balans tashkilotlar
                       </h1>
-                      <div className="reigon-heading-statis-wrapper d-flex cursor" onClick={() => {
+                      <div className="region-heading-statis-wrapper d-flex cursor" onClick={() => {
                         setBalansOrgId(undefined)
                         getStationStatisByBalansOrg()
                         setWhichStation("allStation");
+                        loaderFunc()
                       }}>
                         <div className="d-flex align-items-center m-0">
                         <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countStationsByRegion} ta</span>
@@ -948,8 +950,8 @@ const UserDashboard = (prop) => {
                         </div>
                         <div className="d-flex align-items-center m-0">
                         <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countNotWorkingStationsRegion} ta</span>
+                        </div>
                       </div>
-                    </div>
                     </div>
                     :
                     <h1 className="dashboard-heading ms-2">
@@ -964,14 +966,14 @@ const UserDashboard = (prop) => {
                   ?
                   <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
                     <AliceCarousel
-                      // autoPlay={true}
+                      autoPlay={true}
                       infinite={true}
                       autoPlayStrategy="all"
                       responsive={responsive}
                       disableButtonsControls={true}
                       animationDuration="900"
                       autoPlayInterval={1000}
-                      // paddingLeft={40}
+                      paddingLeft={40}
                       mouseTracking
                       items={items}
                       />
@@ -1200,7 +1202,7 @@ const UserDashboard = (prop) => {
                   ?
                   <div className="dashboard-list pt-4">
                     <h3>
-                    {regionName} balans tashkilotlari statistikasi
+                    {regionName} {foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) + ' balans tashkiloti': null}  statistikasi
                     </h3>
                     <ul className="list-unstyled m-0 d-flex flex-wrap align-items-center justify-content-between">
                       {stationStatistic?.totalStationsCount > 0 ? (
