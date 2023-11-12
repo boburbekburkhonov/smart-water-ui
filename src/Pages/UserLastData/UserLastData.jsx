@@ -831,6 +831,7 @@ const UserLastData = (prop) => {
       setBalansOrgId(e.balance_organization_id)
       getStationStatisByBalansOrg(e.balance_organization_id)
       setWhichStation('allStation')
+      setTableTitle("Umumiy stansiyalar soni");
       loaderFunc()
     }}>
        <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">

@@ -631,6 +631,7 @@ const UserDashboard = (prop) => {
       setBalansOrgId(e.balance_organization_id)
       getStationStatisByBalansOrg(e.balance_organization_id)
       setWhichStation('allStation')
+      setTableTitle("Umumiy stansiyalar soni");
       loaderFunc()
     }}>
        <div className="sort-dashboard-wrapper">
@@ -940,6 +941,7 @@ const UserDashboard = (prop) => {
                         setBalansOrgId(undefined)
                         getStationStatisByBalansOrg()
                         setWhichStation("allStation");
+                        setTableTitle("Umumiy stansiyalar soni");
                         loaderFunc()
                       }}>
                         <div className="d-flex align-items-center m-0">
