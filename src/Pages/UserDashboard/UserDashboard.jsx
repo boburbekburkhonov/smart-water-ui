@@ -346,69 +346,136 @@ const UserDashboard = (prop) => {
     setDataOrStation("station");
     const index = getElementsAtEvent(chartRef.current, event)[0]?.index;
 
-    if (index == 0) {
-      setTableTitle("Batareya quvvati 90% dan ko'p bo'lgan stansiyalar");
-      // ! LIMIT
-      customFetch.get(
-        `/last-data/getGreaterAndLessByStations?great=90&page=1&perPage=10&less=100`)
-        .then((data) => {
-          setViewStationByCharLimit(data.data.data.data)
-        });
+    if(balansOrgId == undefined){
+      if (index == 0) {
+        setTableTitle("Batareya quvvati 90% dan ko'p bo'lgan stansiyalar");
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStations?great=89&page=1&perPage=10&less=101`)
+          .then((data) => {
+            console.log(data.data.data);
+            setViewStationByCharLimit(data.data.data.data)
+          });
 
-      // !----------------------------------------------------------------
+        // !----------------------------------------------------------------
 
-      customFetch.get(`/last-data/getGreaterAndLessByStations?great=90&less=100`)
-        .then((data) => setViewStationByChar(data.data.data.data));
-    } else if (index == 1) {
-      setTableTitle("Batareya quvvati 75% dan ko'p bo'lgan stansiyalar");
+        customFetch.get(`/last-data/getGreaterAndLessByStations?great=89&less=101`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 1) {
+        setTableTitle("Batareya quvvati 75% dan ko'p bo'lgan stansiyalar");
 
-      // ! LIMIT
-      customFetch.get(
-        `/last-data/getGreaterAndLessByStations?great=75&page=1&perPage=10&less=90`)
-        .then((data) => setViewStationByCharLimit(data.data.data.data));
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStations?great=74&page=1&perPage=10&less=90`)
+          .then((data) => setViewStationByCharLimit(data.data.data.data));
 
-      // !----------------------------------------------------------------
+        // !----------------------------------------------------------------
 
-      customFetch.get(`/last-data/getGreaterAndLessByStations?great=75&less=90`)
-        .then((data) => setViewStationByChar(data.data.data.data));
-    } else if (index == 2) {
-      setTableTitle("Batareya quvvati 50% dan ko'p bo'lgan stansiyalar");
+        customFetch.get(`/last-data/getGreaterAndLessByStations?great=74&less=90`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 2) {
+        setTableTitle("Batareya quvvati 50% dan ko'p bo'lgan stansiyalar");
 
-      // ! LIMIT
-      customFetch.get(
-        `/last-data/getGreaterAndLessByStations?great=50&page=1&perPage=10&less=75`)
-        .then((data) => setViewStationByCharLimit(data.data.data.data));
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStations?great=49&page=1&perPage=10&less=75`)
+          .then((data) => setViewStationByCharLimit(data.data.data.data));
 
-      // !----------------------------------------------------------------
+        // !----------------------------------------------------------------
 
-      customFetch.get(`/last-data/getGreaterAndLessByStations?great=50&less=75`)
-        .then((data) => setViewStationByChar(data.data.data.data));
-    } else if (index == 3) {
-      setTableTitle("Batareya quvvati 25% dan ko'p bo'lgan stansiyalar");
+        customFetch.get(`/last-data/getGreaterAndLessByStations?great=49&less=75`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 3) {
+        setTableTitle("Batareya quvvati 25% dan ko'p bo'lgan stansiyalar");
 
-      // ! LIMIT
-      customFetch.get(
-        `/last-data/getGreaterAndLessByStations?great=25&page=1&perPage=10&less=50`)
-        .then((data) => setViewStationByCharLimit(data.data.data.data));
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStations?great=24&page=1&perPage=10&less=50`)
+          .then((data) => setViewStationByCharLimit(data.data.data.data));
 
-      // !----------------------------------------------------------------
+        // !----------------------------------------------------------------
 
-      customFetch.get(`${api}/last-data/getGreaterAndLessByStations?great=25&less=50`)
-        .then((data) => setViewStationByChar(data.data.data.data));
-    } else if (index == 4) {
-      setTableTitle("Batareya quvvati 25% dan kam bo'lgan stansiyalar");
+        customFetch.get(`${api}/last-data/getGreaterAndLessByStations?great=24&less=50`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 4) {
+        setTableTitle("Batareya quvvati 25% dan kam bo'lgan stansiyalar");
 
-      // ! LIMIT
-      customFetch.get(
-        `/last-data/getGreaterAndLessByStations?great=0&page=1&perPage=10&less=25`)
-        .then((data) => {
-          setViewStationByCharLimit(data.data.data.data)
-        });
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStations?great=-1&page=1&perPage=10&less=25`)
+          .then((data) => {
+            setViewStationByCharLimit(data.data.data.data)
+          });
 
-      // !----------------------------------------------------------------
+        // !----------------------------------------------------------------
 
-      customFetch.get(`${api}/last-data/getGreaterAndLessByStations?great=0&less=25`)
-        .then((data) => setViewStationByChar(data.data.data.data));
+        customFetch.get(`${api}/last-data/getGreaterAndLessByStations?great=-1&less=25`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      }
+    }else {
+      if (index == 0) {
+        setTableTitle("Batareya quvvati 90% dan ko'p bo'lgan stansiyalar");
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=${balansOrgId}&great=89&less=101`)
+          .then((data) => {
+            setViewStationByCharLimit(data.data.data.data)
+          });
+
+        // !----------------------------------------------------------------
+
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=${balansOrgId}&great=89&less=101`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 1) {
+        setTableTitle("Batareya quvvati 75% dan ko'p bo'lgan stansiyalar");
+
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=${balansOrgId}&great=74&less=90`)
+          .then((data) => setViewStationByCharLimit(data.data.data.data));
+
+        // !----------------------------------------------------------------
+
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=${balansOrgId}&great=74&less=90`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 2) {
+        setTableTitle("Batareya quvvati 50% dan ko'p bo'lgan stansiyalar");
+
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=${balansOrgId}&great=49&less=75`)
+          .then((data) => setViewStationByCharLimit(data.data.data.data));
+
+        // !----------------------------------------------------------------
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=${balansOrgId}&great=49&less=75`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 3) {
+        setTableTitle("Batareya quvvati 25% dan ko'p bo'lgan stansiyalar");
+
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=${balansOrgId}&great=24&less=50`)
+          .then((data) => setViewStationByCharLimit(data.data.data.data));
+
+        // !----------------------------------------------------------------
+
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=${balansOrgId}&great=24&less=50`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      } else if (index == 4) {
+        setTableTitle("Batareya quvvati 25% dan kam bo'lgan stansiyalar");
+
+        // ! LIMIT
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=${balansOrgId}&great=-1&less=25`)
+          .then((data) => {
+            setViewStationByCharLimit(data.data.data.data)
+          });
+
+        // !----------------------------------------------------------------
+
+        customFetch.get(`${api}/last-data/getGreaterAndLessByStationsByOrganization?organization=${balansOrgId}&great=-1&less=25`)
+          .then((data) => setViewStationByChar(data.data.data.data));
+      }
     }
   };
 
@@ -613,7 +680,7 @@ const UserDashboard = (prop) => {
   };
 
   const getStationStatisByBalansOrg = id => {
-    // ! STATISTIC STATION BY BALANS ORG
+    // ! STATISTIC STATION BY BALANS ORGANISATION
     if(id == undefined){
       customFetch
       .get(`/last-data/getStatisticStations`)
@@ -624,6 +691,16 @@ const UserDashboard = (prop) => {
       .then((data) => settationStatistic(data.data.data));
     }
 
+    // ! STATISTIC STATION BATTERY BY BALANS ORGANISATION
+    if(id == undefined){
+      customFetch
+      .get(`/stations/getStatisticStationsByBattery`)
+      .then((data) => setStationBattery(data.data.data));
+    }else {
+      customFetch
+      .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=${id}`)
+      .then((data) => setStationBattery(data.data.data));
+    }
   }
 
   const items = stationsCountByRegion?.gruopOrganization.map((e, i) => {
@@ -632,6 +709,7 @@ const UserDashboard = (prop) => {
       getStationStatisByBalansOrg(e.balance_organization_id)
       setWhichStation('allStation')
       setTableTitle("Umumiy stansiyalar soni");
+      setDataOrStation('data')
       loaderFunc()
     }}>
        <div className="sort-dashboard-wrapper">
@@ -942,6 +1020,7 @@ const UserDashboard = (prop) => {
                         getStationStatisByBalansOrg()
                         setWhichStation("allStation");
                         setTableTitle("Umumiy stansiyalar soni");
+                        setDataOrStation('data')
                         loaderFunc()
                       }}>
                         <div className="d-flex align-items-center m-0">
@@ -969,12 +1048,12 @@ const UserDashboard = (prop) => {
                   <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
                     <AliceCarousel
                       autoPlay={true}
-                      infinite={true}
+                      // infinite={true}
                       autoPlayStrategy="all"
                       responsive={responsive}
                       disableButtonsControls={true}
                       animationDuration="900"
-                      autoPlayInterval={1000}
+                      autoPlayInterval={10000}
                       paddingLeft={40}
                       mouseTracking
                       items={items}

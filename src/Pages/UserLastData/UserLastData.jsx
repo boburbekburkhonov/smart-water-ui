@@ -911,7 +911,7 @@ const UserLastData = (prop) => {
                       responsive={responsive}
                       disableButtonsControls={true}
                       animationDuration="900"
-                      autoPlayInterval={1000}
+                      autoPlayInterval={10000}
                       paddingLeft={40}
                       mouseTracking
                       items={items}
