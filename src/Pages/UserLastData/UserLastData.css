@@ -386,3 +386,22 @@
 .region-heading-statis-wrapper-last-data {
   background-color: rgb(239, 239, 239) !important;
 }
+
+.dashboard-list-last-data {
+  margin: -20px !important;
+  margin-top: 10px !important;
+}
+
+.dashboard-list-item-last-data  {
+  margin: 20px !important;
+}
+
+.user-last-data-list {
+  margin: -20px !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.user-last-data-list-item {
+  margin: 20px !important;
+}

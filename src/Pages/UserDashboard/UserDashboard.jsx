@@ -1011,7 +1011,7 @@ const UserDashboard = (prop) => {
                   {
                     role == 'Region'
                     ?
-                    <div className="w-100 d-flex align-items-center justify-content-between">
+                    <div className="dashboard-statis-top w-100 d-flex align-items-center justify-content-between flex-wrap">
                       <h1 className="dashboard-heading ms-2 dashboard-heading-role">
                       {regionName}ga tegishli balans tashkilotlar
                       </h1>
@@ -1285,10 +1285,10 @@ const UserDashboard = (prop) => {
                     <h3>
                     {regionName} {foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) + ' balans tashkiloti': null}  statistikasi
                     </h3>
-                    <ul className="list-unstyled m-0 d-flex flex-wrap align-items-center justify-content-between">
+                    <ul className="user-dashboard-list-statis list-unstyled m-0 d-flex flex-wrap align-items-center">
                       {stationStatistic?.totalStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex"
+                          className="dashboard-list-item user-dashboard-list-statis-item mt-3 d-flex"
                           onClick={() => {
                             setWhichStation("allStation");
                             setTableTitle("Umumiy stansiyalar soni");
@@ -1318,7 +1318,7 @@ const UserDashboard = (prop) => {
 
                       {stationStatistic?.totalTodayWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item d-flex mt-3"
+                          className="dashboard-list-item user-dashboard-list-statis-item d-flex mt-3"
                           onClick={() => {
                             setWhichStation("todayStation");
                             setTableTitle("Bugun ishlayotganlar stansiyalar");
@@ -1353,7 +1353,7 @@ const UserDashboard = (prop) => {
 
                       {stationStatistic?.totalThreeDayWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex"
+                          className="dashboard-list-item user-dashboard-list-statis-item mt-3 d-flex"
                           onClick={() => {
                             setWhichStation("withinThreeDayStation");
                             setTableTitle("3 kun ichida ishlagan stansiyalar");
@@ -1388,7 +1388,7 @@ const UserDashboard = (prop) => {
 
                       {stationStatistic?.totalMonthWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex"
+                          className="dashboard-list-item user-dashboard-list-statis-item mt-3 d-flex"
                           onClick={() => {
                             setWhichStation("totalMonthWorkStation");
                             setTableTitle("Oxirgi oy ishlagan stansiyalar");
@@ -1424,7 +1424,7 @@ const UserDashboard = (prop) => {
 
                       {stationStatistic?.totalMoreWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex"
+                          className="dashboard-list-item user-dashboard-list-statis-item mt-3 d-flex"
                           onClick={() => {
                             setWhichStation("totalMoreWorkStations");
                             setTableTitle("Uzoq vaqt ishlamagan qurilmalar");
@@ -1460,7 +1460,7 @@ const UserDashboard = (prop) => {
 
                       {stationStatistic?.totalNotDataStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex"
+                          className="dashboard-list-item user-dashboard-list-statis-item mt-3 d-flex"
                           onClick={() => {
                             setWhichStation("notWorkStation");
                             setTableTitle("Umuman ishlamagan stansiyalar");

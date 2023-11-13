@@ -169,10 +169,31 @@
 
 }
 
+@media (max-width: 1490px) {
+
+  .dashboard-statis-top {
+    justify-content: center !important;
+  }
+
+  .region-heading-statis-wrapper{
+    margin-top: 20px;
+  }
+
+}
+
 @media (max-width: 835px) {
 
   .dashboard-list {
     justify-content: center !important;
   }
 
+}
+
+.user-dashboard-list-statis {
+  margin: -20px !important;
+  margin-top: 10px !important;
+}
+
+.user-dashboard-list-statis-item {
+  margin: 20px !important;
 }

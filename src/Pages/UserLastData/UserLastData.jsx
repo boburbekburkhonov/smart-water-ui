@@ -928,10 +928,10 @@ const UserLastData = (prop) => {
                     </h3>
                     : null
                     }
-                    <ul className="dashboard-list list-unstyled m-0 d-flex flex-wrap align-items-center justify-content-between mt-4">
+                    <ul className="dashboard-list dashboard-list-last-data list-unstyled m-0 d-flex flex-wrap align-items-center">
                       {stationStatistic?.totalStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex border-blue"
+                          className="dashboard-list-item dashboard-list-item-last-data  d-flex border-blue"
                           onClick={() => {
                             setWhichStation("allStation");
                             setTableTitle("Umumiy stansiyalar soni");
@@ -961,7 +961,7 @@ const UserLastData = (prop) => {
 
                       {stationStatistic?.totalTodayWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item d-flex mt-3 border-green"
+                          className="dashboard-list-item dashboard-list-item-last-data d-flex mt-3 border-green"
                           onClick={() => {
                             setWhichStation("todayStation");
                             setTableTitle("Bugun ishlayotganlar stansiyalar");
@@ -996,7 +996,7 @@ const UserLastData = (prop) => {
 
                       {stationStatistic?.totalThreeDayWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex border-azeu"
+                          className="dashboard-list-item dashboard-list-item-last-data mt-3 d-flex border-azeu"
                           onClick={() => {
                             setWhichStation("withinThreeDayStation");
                             setTableTitle("3 kun ichida ishlagan stansiyalar");
@@ -1034,7 +1034,7 @@ const UserLastData = (prop) => {
 
                       {stationStatistic?.totalMonthWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex border-yellow"
+                          className="dashboard-list-item dashboard-list-item-last-data mt-3 d-flex border-yellow"
                           onClick={() => {
                             setWhichStation("totalMonthWorkStation");
                             setTableTitle("Oxirgi oy ishlagan stansiyalar");
@@ -1072,7 +1072,7 @@ const UserLastData = (prop) => {
 
                       {stationStatistic?.totalMoreWorkStationsCount > 0 ? (
                         <li
-                          className="dashboard-list-item mt-3 d-flex border-orange"
+                          className="dashboard-list-item dashboard-list-item-last-data mt-3 d-flex border-orange"
                           onClick={() => {
                             setWhichStation("totalMoreWorkStations");
                             setTableTitle("Uzoq vaqt ishlamagan qurilmalar");
@@ -1134,10 +1134,10 @@ const UserLastData = (prop) => {
                       <span className="loader"></span>
                     </div>
                   ) : (
-                    <ol className="user-last-data-list list-unstyled m-0 mt-4 mb-4 d-flex align-items-center justify-content-between flex-wrap">
+                    <ol className="user-last-data-list list-unstyled m-0 d-flex align-items-center flex-wrap">
                       {allStation?.map((e, i) => {
                         return (
-                          <li className="user-last-data-list-item mt-4" key={i}>
+                          <li className="user-last-data-list-item" key={i}>
                             <a
                               onClick={() => {
                                 navigate(
