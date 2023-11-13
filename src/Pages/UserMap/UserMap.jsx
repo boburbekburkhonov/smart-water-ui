@@ -119,14 +119,26 @@ const UserMap = () => {
           `/last-data/getLastData?page=${page}&perPage=${20}`
         );
 
-        if (requestLastData.data.data.length > 0) {
-          requestLastData.data.data.forEach((e) => {
-            lastData.push(e);
-            lastDataForList.push(e);
-          });
-          setLastDataLength(lastData.length);
-          page++;
-        } else if (requestLastData.data.data.length == 0) {
+        if (requestLastData.data.totalPages >= page) {
+          if(requestLastData.data.totalPages == page) {
+            let limit = requestLastData.data.totalDocs - (requestLastData.data.totalPages - 1) * 20
+              requestLastData.data.data.forEach((e, i) => {
+                if(i < limit){
+                  lastData.push(e);
+                  lastDataForList.push(e);
+                }
+              });
+              setLastDataLength(lastData.length);
+              page++;
+            }else {
+              requestLastData.data.data.forEach((e) => {
+                lastData.push(e);
+                lastDataForList.push(e);
+              });
+              setLastDataLength(lastData.length);
+              page++;
+            }
+        } else  {
           end = false;
         }
       }
