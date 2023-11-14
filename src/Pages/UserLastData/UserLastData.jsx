@@ -855,6 +855,16 @@ const UserLastData = (prop) => {
      </div>
   });
 
+  // ! FIXED STATION NAME
+  const fixedNameStation = name => {
+    const fixedName = name.split('_')
+    if(fixedName.length > 2){
+      return `${fixedName[0]}_${fixedName[1]}`
+    }else {
+      return name
+    }
+  }
+
   return (
     <section className="home-section py-3">
       <div className="container-fluid">
@@ -1164,8 +1174,8 @@ const UserLastData = (prop) => {
                               <div className="user-last-data-list-item-top d-flex align-items-center justify-content-between">
                                 <h3 className="fs-5 m-0">
                                   {whichStation == "allStation"
-                                    ? e.name
-                                    : e.station?.name}
+                                    ? fixedNameStation(e.name)
+                                    : fixedNameStation(e.station?.name)}
                                 </h3>
                                 <div className="d-flex align-items-center justify-content-between">
                                   <p
