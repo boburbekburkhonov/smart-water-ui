@@ -10,6 +10,10 @@ import excel from "../../assets/images/excel.png";
 import * as XLSX from "xlsx";
 import axios from "axios";
 import "./UserStations.css";
+import AliceCarousel from "react-alice-carousel";
+import all from "../../assets/images/all.png";
+import active from "../../assets/images/active.png";
+import passive from "../../assets/images/passive.png";
 
 const UserStations = () => {
   const [count, setCount] = useState(0);
@@ -28,6 +32,11 @@ const UserStations = () => {
   const [whichData, setWhichData] = useState("allStation");
   const [minimumValue, setMinimumValue] = useState("");
   const [maximumValue, setMaximumValue] = useState("");
+  const [stationsCountByRegion, setStationsCountByRegion] = useState();
+  const [allBalansOrg, setAllBalansOrg] = useState([]);
+  const [balansOrgId, setBalansOrgId] = useState();
+  const [tableTitle, setTableTitle] = useState('Toshkent viloyatiga tegishli stansiyalar');
+  const [regionName, setRegionName] = useState();
   const balanceOrgName = localStorage.getItem("balanceOrgName");
   const name = window.localStorage.getItem("name");
   const role = window.localStorage.getItem("role");
@@ -103,6 +112,12 @@ const UserStations = () => {
     }
   );
 
+  if(role == 'Region'){
+    customFetch
+      .get(`/regions/${name}`)
+      .then((data) => setRegionName(data.data.region.name));
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       // ! ALL STATIONS
@@ -131,14 +146,32 @@ const UserStations = () => {
         setNotWorkingStation(data.data.data.data);
         setTotalPagesForStatus(data.data.data.metadata.lastPage);
       });
+
+    // ! STATION BY REGION
+    customFetch
+      .get(`/stations/getStationsCountByRegion?regionNumber=${name}`)
+      .then((data) => setStationsCountByRegion(data.data))
+
+    // ! ALL BALANS ORG
+    customFetch
+    .get(`/balance-organizations/all-find`)
+    .then((data) => setAllBalansOrg(data.data.balanceOrganizations))
   }, []);
 
   const handlePageChange = (selectedPage) => {
-    customFetch
-      .get(`/stations/all?page=${selectedPage.selected + 1}&perPage=10`)
+    if(balansOrgId == undefined){
+      customFetch
+        .get(`/stations/all?page=${selectedPage.selected + 1}&perPage=10`)
+        .then((data) => {
+          setAllStation(data.data.data.data);
+        });
+    }else {
+      customFetch
+      .get(`/stations/all/balanceOrganization?balanceOrganizationNumber=${balansOrgId}&page=${selectedPage.selected + 1}&perPage=10`)
       .then((data) => {
         setAllStation(data.data.data.data);
       });
+    }
   };
 
   const handlePageChangeForBattery = (selectedPage) => {
@@ -252,7 +285,6 @@ const UserStations = () => {
   // ! SAVE DATA EXCEL
   const exportDataToExcel = async () => {
     const fixedDate = new Date();
-
     const resultDate = `${fixedDate.getDate()}/${
       fixedDate.getMonth() + 1
     }/${fixedDate.getFullYear()} ${fixedDate.getHours()}:${
@@ -262,30 +294,56 @@ const UserStations = () => {
     }`;
 
     if (whichData == "allStation") {
-      const requestAllStation = await customFetch.get(
-        `${api}/stations/all?page=1&perPage=${totalPages * 10}`
-      );
-
       const resultExcelData = [];
 
-      requestAllStation.data.data.data.forEach((e) => {
-        resultExcelData.push({
-          Nomi: e.name,
-          Imei: e.imel,
-          Lokatsiya: e.location,
-          Qurilma_Telefon_Raqami: e.devicePhoneNum,
-          User_Telefon_Raqami: e.userPhoneNum,
-          Programma_Versiyasi: e.programVersion,
-          Status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
-          Integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
-          Signal: e.signal,
-          Temperture: e.temperture,
-          Battereya: `${e.battery}%`,
-          Datani_yuborish_vaqti: e.sendDataTime,
-          Infoni_yuborish_vaqti: e.sendInfoTime,
-          Sana: e.date,
+      if(balansOrgId == undefined){
+        const requestAllStation = await customFetch.get(
+          `/stations/all?page=1&perPage=${totalPages * 10}`
+        );
+
+        requestAllStation.data.data.data.forEach((e) => {
+          resultExcelData.push({
+            Nomi: e.name,
+            Imei: e.imel,
+            Lokatsiya: e.location,
+            Qurilma_Telefon_Raqami: e.devicePhoneNum,
+            User_Telefon_Raqami: e.userPhoneNum,
+            Programma_Versiyasi: e.programVersion,
+            Status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
+            Integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
+            Signal: e.signal,
+            Temperture: e.temperture,
+            Battereya: `${e.battery}%`,
+            Datani_yuborish_vaqti: e.sendDataTime,
+            Infoni_yuborish_vaqti: e.sendInfoTime,
+            Sana: e.date,
+          });
         });
-      });
+      }else {
+        const requestAllStation = await customFetch.get(
+          `/stations/all/balanceOrganization?balanceOrganizationNumber=${balansOrgId}&page=1&perPage=${totalPages * 10}`
+        );
+
+        requestAllStation.data.data.data.forEach((e) => {
+          resultExcelData.push({
+            Nomi: e.name,
+            Imei: e.imel,
+            Lokatsiya: e.location,
+            Qurilma_Telefon_Raqami: e.devicePhoneNum,
+            User_Telefon_Raqami: e.userPhoneNum,
+            Programma_Versiyasi: e.programVersion,
+            Status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
+            Integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
+            Signal: e.signal,
+            Temperture: e.temperture,
+            Battereya: `${e.battery}%`,
+            Datani_yuborish_vaqti: e.sendDataTime,
+            Infoni_yuborish_vaqti: e.sendInfoTime,
+            Sana: e.date,
+          });
+        });
+      }
+
 
       const workBook = XLSX.utils.book_new();
       const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
@@ -295,7 +353,7 @@ const UserStations = () => {
       if (allStation.length > 0) {
         XLSX.writeFile(
           workBook,
-          `${role == 'USER' ? name : balanceOrgName} ning umumiy stansiyalari ${resultDate}.xlsx`
+          `${role == 'USER' ? name : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}` : balanceOrgName} ning umumiy stansiyalari ${resultDate}.xlsx`
         );
       }
     } else if (whichData == "StationForBattery") {
@@ -378,6 +436,67 @@ const UserStations = () => {
       }
     }
   };
+
+  const foundBalansOrgName = id => {
+    const foundBalansOrg = allBalansOrg.find(i => i.id == id)
+
+    return foundBalansOrg?.name
+  }
+
+  const responsive = {
+    0: { items: 1 },
+    820: { items: 2 },
+    1100: { items: 3 },
+    1400: { items: 5 },
+    2000: { items: 5 },
+  };
+
+  const getStationStatisByBalansOrg = id => {
+    // !  STATIONS BY BALANS ORGANISATION
+    if(id == undefined){
+      customFetch
+      .get(`/stations/all?page=1&perPage=10`)
+      .then((data) => {
+        setAllStation(data.data.data.data);
+        setTotalPages(data.data.data.metadata.lastPage);
+      });
+    }else {
+      setTableTitle(`${foundBalansOrgName(id)}ga tegishli stansiyalar`)
+
+      customFetch
+      .get(`/stations/all/balanceOrganization?balanceOrganizationNumber=${id}&page=1&perPage=10`)
+      .then((data) => {
+        setAllStation(data.data.data.data);
+        setTotalPages(data.data.data.metadata.lastPage);
+      });
+    }
+  }
+
+  const items = stationsCountByRegion?.gruopOrganization.map((e, i) => {
+    return  <div className="sort-dashboard-list-item ms-3" onClick={(s) => {
+      setBalansOrgId(e.balance_organization_id)
+      getStationStatisByBalansOrg(e.balance_organization_id)
+    }}>
+       <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">
+       <h6>
+       {
+         foundBalansOrgName(e.balance_organization_id)
+       } {" "}
+       </h6>
+       <div className="d-flex flex-column justify-content-end">
+         <div className="d-flex align-items-center m-0">
+           <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{e.countStations} ta</span>
+         </div>
+         <div className="d-flex align-items-center m-0">
+           <img src={active} alt="active" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{e.countWorkStations} ta</span>
+         </div>
+         <div className="d-flex align-items-center m-0">
+           <img src={passive} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{e.countNotWorkStations} ta</span>
+         </div>
+       </div>
+     </div>
+     </div>
+  });
 
   return (
     <HelmetProvider>
@@ -639,6 +758,39 @@ const UserStations = () => {
                       className="tab-pane fade show active profile-users table-scroll"
                       id="profile-users"
                     >
+                      <div className="w-100 d-flex align-items-center justify-content-between mb-4">
+                      <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
+                      {regionName}ga tegishli balans tashkilotlar
+                      </h1>
+                      <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
+                        setBalansOrgId(undefined)
+                        getStationStatisByBalansOrg()
+                        setTableTitle('Toshkent viloyatiga tegishli stansiyalar')
+                      }}>
+                        <div className="d-flex align-items-center m-0">
+                        <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
+                        </div>
+                        <div className="d-flex align-items-center m-0">
+                        <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsRegion} ta</span>
+                        </div>
+                        <div className="d-flex align-items-center m-0">
+                        <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
+                        </div>
+                      </div>
+                    </div>
+
+                       <AliceCarousel
+                      autoPlay={true}
+                      // infinite={true}
+                      autoPlayStrategy="all"
+                      responsive={responsive}
+                      disableButtonsControls={true}
+                      animationDuration="900"
+                      autoPlayInterval={10000}
+                      paddingLeft={40}
+                      mouseTracking
+                      items={items}
+                      />
                       <h3 className="stations-search-heading">Qidirish</h3>
                       <form
                         onSubmit={searchNameOrImei}
@@ -680,6 +832,8 @@ const UserStations = () => {
                           <img src={excel} alt="excel" width={26} height={30} />
                         </button>
                       </div>
+
+                      <h3>{tableTitle}</h3>
 
                       {allStation?.length == 0 ? (
                         <h3 className="alert alert-dark text-center mt-5">
