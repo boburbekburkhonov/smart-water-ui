@@ -178,8 +178,8 @@ const UserStations = () => {
 
   const handlePageChangeForBattery = (selectedPage) => {
     if (
-      nameOrImeiInputMax.value.length == 0 ||
-      nameOrImeiInputMin.value.length == 0
+      minimumValue.length == 0 ||
+      maximumValue.length == 0
     ) {
       if(balansOrgIdForBattery == undefined){
         customFetch
@@ -193,17 +193,24 @@ const UserStations = () => {
         });
       }
     } else {
-      customFetch
-        .get(
-          `/last-data/getGreaterAndLessByStations?great=${
-            nameOrImeiInputMin.value
-          }&page=${selectedPage.selected + 1}&perPage=10&less=${
-            nameOrImeiInputMax.value
-          }`
+      if(balansOrgIdForBattery == undefined){
+        customFetch
+          .get(
+            `/last-data/getGreaterAndLessByStations?great=${
+              minimumValue - 1
+            }&page=${selectedPage.selected + 1}&perPage=10&less=${maximumValue}`
+          )
+          .then((data) => {
+            setAllStationForBattery(data.data.data.data);
+          });
+      }else {
+        customFetch.get(
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=${selectedPage.selected + 1}&perPage=10&organization=${balansOrgIdForBattery}&great=${minimumValue - 1}&less=${maximumValue}`
         )
         .then((data) => {
           setAllStationForBattery(data.data.data.data);
         });
+      }
     }
   };
 
@@ -282,14 +289,29 @@ const UserStations = () => {
 
     const { nameOrImeiInputMin, nameOrImeiInputMax } = e.target;
 
-    customFetch
-      .get(
-        `/last-data/getGreaterAndLessByStations?great=${nameOrImeiInputMin.value}&page=1&perPage=10&less=${nameOrImeiInputMax.value}`
+    if(balansOrgIdForBattery == undefined){
+      customFetch
+        .get(
+          `/last-data/getGreaterAndLessByStations?great=${nameOrImeiInputMin.value - 1}&page=1&perPage=10&less=${nameOrImeiInputMax.value}`
+        )
+        .then((data) => {
+          setAllStationForBattery(data.data.data.data);
+          setTotalPagesForBattery(data.data.data.metadata.lastPage);
+
+          nameOrImeiInputMin.value = null
+          nameOrImeiInputMax.value = null
+        });
+    }else {
+      customFetch.get(
+        `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=${balansOrgIdForBattery}&great=${nameOrImeiInputMin.value - 1}&less=${nameOrImeiInputMax.value}`
       )
       .then((data) => {
         setAllStationForBattery(data.data.data.data);
         setTotalPagesForBattery(data.data.data.metadata.lastPage);
+        nameOrImeiInputMin.value = null
+        nameOrImeiInputMax.value = null
       });
+    }
   };
 
   // ! SAVE DATA EXCEL
@@ -369,12 +391,12 @@ const UserStations = () => {
     } else if (whichData == "StationForBattery") {
       const resultExcelData = [];
 
-      if(balansOrgId == undefined){
+      if(balansOrgIdForBattery == undefined){
         const requestAllStationForBattery = await customFetch.get(
           `/last-data/getGreaterAndLessByStations?great=${
-            minimumValue.length > 0 ? minimumValue : 0
-          }&page=1&perPage=${totalPages * 10}&less=${
-            maximumValue.length > 0 ? maximumValue : 100
+            minimumValue.length > 0 ? minimumValue - 1 : -1
+          }&page=1&perPage=${totalPagesForBattery * 10}&less=${
+            maximumValue.length > 0 ? maximumValue : 101
           }`
         );
 
@@ -398,10 +420,10 @@ const UserStations = () => {
         });
       }else {
         const requestAllStationForBattery = await customFetch.get(
-          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=${totalPages * 10}&organization=${balansOrgIdForBattery}&great=${
-            minimumValue.length > 0 ? minimumValue : 0
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=${totalPagesForBattery * 10}&organization=${balansOrgIdForBattery}&great=${
+            minimumValue.length > 0 ? minimumValue - 1 : -1
           }&less=${
-            maximumValue.length > 0 ? maximumValue : 100
+            maximumValue.length > 0 ? maximumValue : 101
           }`
         );
 
@@ -566,6 +588,8 @@ const UserStations = () => {
     return  <div className="sort-dashboard-list-item ms-3" onClick={(s) => {
       setBalansOrgIdForBattery(e.balance_organization_id)
       getStationStatisByBalansOrgForBattery(e.balance_organization_id)
+      setMinimumValue('')
+      setMaximumValue('')
     }}>
        <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">
        <h6>
@@ -1024,6 +1048,8 @@ const UserStations = () => {
                         setBalansOrgIdForBattery(undefined)
                         getStationStatisByBalansOrgForBattery()
                         setTableTitleForBattery('Toshkent viloyatiga tegishli stansiyalar')
+                        setMinimumValue('')
+                        setMaximumValue('')
                       }}>
                         <div className="d-flex align-items-center m-0">
                         <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
