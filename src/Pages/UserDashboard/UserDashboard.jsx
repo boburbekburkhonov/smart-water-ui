@@ -879,7 +879,7 @@ const UserDashboard = (prop) => {
                             {e?.station?.name}
                           </td>
                           <td className={`text-center fw-bold`}>
-                            {e?.stations?.battery}
+                            {e?.station?.battery}
                           </td>
                           <td className={`text-center fw-bold`}>
                             {e?.level != undefined
