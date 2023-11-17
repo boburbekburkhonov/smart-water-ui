@@ -161,3 +161,11 @@
   max-width: 220px;
    width: 100%;
 }
+
+@media (max-width: 1500px) {
+
+  .modal-body-item {
+    justify-content: center !important;
+  }
+
+}

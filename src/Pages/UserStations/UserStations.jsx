@@ -108,7 +108,7 @@ const UserStations = () => {
         window.localStorage.setItem("accessToken", access_token);
 
         customFetch.defaults.headers.common[
-          "Authorization"
+          "Authorization" 
         ] = `Bearer ${access_token}`;
         return customFetch(originalRequest);
       }
@@ -217,13 +217,23 @@ const UserStations = () => {
   };
 
   const handlePageChangeForStatus = (selectedPage) => {
-    customFetch
-      .get(
-        `/stations/all/statusOff?&page=${selectedPage.selected + 1}&perPage=10`
-      )
-      .then((data) => {
-        setNotWorkingStation(data.data.data.data);
-      });
+    if(balansOrgIdForStatus == undefined){
+      customFetch
+        .get(
+          `/stations/all/statusOff?&page=${selectedPage.selected + 1}&perPage=10`
+        )
+        .then((data) => {
+          setNotWorkingStation(data.data.data.data);
+        });
+    }else {
+      customFetch
+        .get(
+          `/stations/searchStatusFalseByBalance?balanceOrganizationNumber=${balansOrgIdForStatus}&page=${selectedPage.selected + 1}&perPage=10`
+        )
+        .then((data) => {
+          setNotWorkingStation(data.data.data.data);
+        });
+    }
   };
 
   const getStationWithImei = async (imei) => {
@@ -350,6 +360,12 @@ const UserStations = () => {
       });
     }
   };
+
+  const foundBalansOrgName = id => {
+    const foundBalansOrg = allBalansOrg.find(i => i.id == id)
+
+    return foundBalansOrg?.name
+  }
 
   // ! SAVE DATA EXCEL
   const exportDataToExcel = async () => {
@@ -496,30 +512,55 @@ const UserStations = () => {
         );
       }
     } else if (whichData == "StationForStatus") {
-      const requestAllStationForStatus = await customFetch.get(
-        `/stations/all/statusOff?&page=1&perPage=${totalPagesForStatus * 10}`
-      );
-
       const resultExcelData = [];
 
-      requestAllStationForStatus.data.data.data.forEach((e) => {
-        resultExcelData.push({
-          Nomi: e.name,
-          Imei: e.imel,
-          Lokatsiya: e.location,
-          Qurilma_Telefon_Raqami: e.devicePhoneNum,
-          User_Telefon_Raqami: e.userPhoneNum,
-          Programma_Versiyasi: e.programVersion,
-          Status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
-          Integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
-          Signal: e.signal,
-          Temperture: e.temperture,
-          Battereya: `${e.battery}%`,
-          Datani_yuborish_vaqti: e.sendDataTime,
-          Infoni_yuborish_vaqti: e.sendInfoTime,
-          Sana: e.date,
+      if(balansOrgIdForStatus == undefined){
+        const requestAllStationForStatus = await customFetch.get(
+          `/stations/all/statusOff?&page=1&perPage=${totalPagesForStatus * 10}`
+        );
+
+        requestAllStationForStatus.data.data.data.forEach((e) => {
+          resultExcelData.push({
+            Nomi: e.name,
+            Imei: e.imel,
+            Lokatsiya: e.location,
+            Qurilma_Telefon_Raqami: e.devicePhoneNum,
+            User_Telefon_Raqami: e.userPhoneNum,
+            Programma_Versiyasi: e.programVersion,
+            Status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
+            Integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
+            Signal: e.signal,
+            Temperture: e.temperture,
+            Battereya: `${e.battery}%`,
+            Datani_yuborish_vaqti: e.sendDataTime,
+            Infoni_yuborish_vaqti: e.sendInfoTime,
+            Sana: e.date,
+          });
         });
-      });
+      }else {
+        const requestAllStationForStatus = await customFetch.get(
+          `/stations/searchStatusFalseByBalance?balanceOrganizationNumber=${balansOrgIdForStatus}&page=1&perPage=${totalPagesForStatus * 10}`
+        );
+
+        requestAllStationForStatus.data.data.data.forEach((e) => {
+          resultExcelData.push({
+            Nomi: e.name,
+            Imei: e.imel,
+            Lokatsiya: e.location,
+            Qurilma_Telefon_Raqami: e.devicePhoneNum,
+            User_Telefon_Raqami: e.userPhoneNum,
+            Programma_Versiyasi: e.programVersion,
+            Status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
+            Integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
+            Signal: e.signal,
+            Temperture: e.temperture,
+            Battereya: `${e.battery}%`,
+            Datani_yuborish_vaqti: e.sendDataTime,
+            Infoni_yuborish_vaqti: e.sendInfoTime,
+            Sana: e.date,
+          });
+        });
+      }
 
       const workBook = XLSX.utils.book_new();
       const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
@@ -529,17 +570,11 @@ const UserStations = () => {
       if (notWorkingStation.length > 0) {
         XLSX.writeFile(
           workBook,
-          `${role == 'USER' ? name : balanceOrgName} ning ishlamagan stansiyalari ${resultDate}.xlsx`
+          `${role == 'USER' ? name : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgIdForStatus) != undefined ? foundBalansOrgName(balansOrgIdForStatus) : ''}` : balanceOrgName} ning ishlamagan stansiyalari ${resultDate}.xlsx`
         );
       }
     }
   };
-
-  const foundBalansOrgName = id => {
-    const foundBalansOrg = allBalansOrg.find(i => i.id == id)
-
-    return foundBalansOrg?.name
-  }
 
   const responsive = {
     0: { items: 1 },
@@ -595,23 +630,22 @@ const UserStations = () => {
 
   // ! STATION STATUS
   const getStationStatisByBalansOrgForStatus = id => {
-    console.log(id);
-    // !  STATIONS BY BALANS ORGANISATION
+    // ! NOT WORKING STATIONS
     if(id == undefined){
       customFetch
-      .get(`/stations/all?page=1&perPage=10`)
+      .get(`/stations/all/statusOff?&page=1&perPage=10`)
       .then((data) => {
-        setAllStationForBattery(data.data.data.data);
-        setTotalPagesForBattery(data.data.data.metadata.lastPage);
+        setNotWorkingStation(data.data.data.data);
+        setTotalPagesForStatus(data.data.data.metadata.lastPage);
       });
     }else {
       setTableTitleForStatus(`${foundBalansOrgName(id)}ga tegishli ishlamayotganlar stansiyalar ro'yhati`)
 
       customFetch
-      .get(`/stations/all/balanceOrganization?balanceOrganizationNumber=${id}&page=1&perPage=10`)
+      .get(`/stations/searchStatusFalseByBalance?balanceOrganizationNumber=${id}&page=1&perPage=10`)
       .then((data) => {
-        setAllStationForBattery(data.data.data.data);
-        setTotalPagesForBattery(data.data.data.metadata.lastPage);
+        setNotWorkingStation(data.data.data.data);
+        setTotalPagesForStatus(data.data.data.metadata.lastPage);
       });
     }
   }
@@ -685,12 +719,12 @@ const UserStations = () => {
        } {" "}
        </h6>
        <div className="d-flex flex-column justify-content-end">
-         <div className="d-flex align-items-center m-0">
+         {/* <div className="d-flex align-items-center m-0">
            <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{e.countStations} ta</span>
          </div>
          <div className="d-flex align-items-center m-0">
            <img src={active} alt="active" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{e.countWorkStations} ta</span>
-         </div>
+         </div> */}
          <div className="d-flex align-items-center m-0">
            <img src={passive} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{e.countNotWorkStations} ta</span>
          </div>
@@ -959,7 +993,7 @@ const UserStations = () => {
                       className="tab-pane fade show active profile-users table-scroll"
                       id="profile-users"
                     >
-                      <div className="w-100 d-flex align-items-center justify-content-between mb-4">
+                      <div className="w-100 d-flex align-items-center justify-content-between flex-wrap mb-4">
                         <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
                         {regionName}ga tegishli balans tashkilotlar
                         </h1>
@@ -1127,7 +1161,7 @@ const UserStations = () => {
                       className="tab-pane fade profile-overview table-scroll"
                       id="profile-overview"
                     >
-                      <div className="w-100 d-flex align-items-center justify-content-between mb-4">
+                      <div className="w-100 d-flex align-items-center justify-content-between flex-wrap mb-4">
                       <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
                       {regionName}ga tegishli balans tashkilotlar
                       </h1>
@@ -1315,14 +1349,14 @@ const UserStations = () => {
                       className="tab-pane fade profile-search table-scroll"
                       id="profile-search"
                     >
-                      <div className="w-100 d-flex align-items-center justify-content-between mb-4">
+                      <div className="station-status-wrapper w-100 d-flex align-items-center justify-content-between flex-wrap mb-4">
                         <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
                         {regionName}ga tegishli balans tashkilotlar
                         </h1>
                       <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
                         setBalansOrgIdForStatus(undefined)
                         getStationStatisByBalansOrgForStatus()
-                        setTableTitleForStatus("Toshkent viloyatiga tegishli ishlamayotganlar stansiyalar ro'yhati")
+                        setTableTitleForStatus(`${regionName}ga tegishli ishlamayotganlar stansiyalar ro'yhati`)
                       }}>
                         <div className="d-flex align-items-center m-0">
                           <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
@@ -1364,7 +1398,7 @@ const UserStations = () => {
                       </div>
                       {notWorkingStation?.length == 0 ? (
                         <h3 className="alert alert-dark text-center mt-5">
-                          Hozircha bunday stansiya yo'q...
+                          {tableTitleForStatus.split('ga')[0]} da ishlamayotgan stansiya yo'q...
                         </h3>
                       ) : (
                         <table className="c-table mt-4  w-10 0 table table-striped table-hover">
