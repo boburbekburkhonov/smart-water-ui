@@ -37,9 +37,9 @@ const UserStations = () => {
   const [balansOrgId, setBalansOrgId] = useState();
   const [balansOrgIdForBattery, setBalansOrgIdForBattery] = useState();
   const [balansOrgIdForStatus, setBalansOrgIdForStatus] = useState();
-  const [tableTitle, setTableTitle] = useState('Toshkent viloyatiga tegishli stansiyalar');
-  const [tableTitleForBattery, setTableTitleForBattery] = useState('Toshkent viloyatiga tegishli stansiyalar');
-  const [tableTitleForStatus, setTableTitleForStatus] = useState("Toshkent viloyatiga tegishli ishlamayotganlar stansiyalar ro'yhati");
+  const [tableTitle, setTableTitle] = useState();
+  const [tableTitleForBattery, setTableTitleForBattery] = useState();
+  const [tableTitleForStatus, setTableTitleForStatus] = useState();
   const [regionName, setRegionName] = useState();
   const balanceOrgName = localStorage.getItem("balanceOrgName");
   const name = window.localStorage.getItem("name");
@@ -108,7 +108,7 @@ const UserStations = () => {
         window.localStorage.setItem("accessToken", access_token);
 
         customFetch.defaults.headers.common[
-          "Authorization" 
+          "Authorization"
         ] = `Bearer ${access_token}`;
         return customFetch(originalRequest);
       }
@@ -1000,7 +1000,7 @@ const UserStations = () => {
                       <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
                         setBalansOrgId(undefined)
                         getStationStatisByBalansOrgForList()
-                        setTableTitle('Toshkent viloyatiga tegishli stansiyalar')
+                        setTableTitle(`${regionName}ga tegishli stansiyalar`)
                       }}>
                         <div className="d-flex align-items-center m-0">
                           <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
@@ -1068,7 +1068,7 @@ const UserStations = () => {
                         </button>
                       </div>
 
-                      <h3>{tableTitle}</h3>
+                      <h3>{tableTitle == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitle}</h3>
 
                       {allStation?.length == 0 ? (
                         <h3 className="alert alert-dark text-center mt-5">
@@ -1168,7 +1168,7 @@ const UserStations = () => {
                       <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
                         setBalansOrgIdForBattery(undefined)
                         getStationStatisByBalansOrgForBattery()
-                        setTableTitleForBattery('Toshkent viloyatiga tegishli stansiyalar')
+                        setTableTitleForBattery(`${regionName}ga tegishli stansiyalar`)
                         setMinimumValue('')
                         setMaximumValue('')
                       }}>
@@ -1256,7 +1256,7 @@ const UserStations = () => {
                         </button>
                       </div>
 
-                      <h3>{tableTitleForBattery}</h3>
+                      <h3>{tableTitleForBattery == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitleForBattery}</h3>
 
 
                       {allStationForBattery?.length == 0 ? (
@@ -1383,7 +1383,7 @@ const UserStations = () => {
                         items={itemsStationByStatus}
                       />
 
-                    <h3 className="mt-4">{tableTitleForStatus}</h3>
+                    <h3 className="mt-4">{tableTitleForStatus == undefined ? `${regionName} ga tegishli ishlamayotganlar stansiyalar ro'yhati` : tableTitleForStatus}</h3>
 
                       <div
                         className="text-end d-flex align-items-center justify-content-end cursor-pointer ms-auto user-station-save"
