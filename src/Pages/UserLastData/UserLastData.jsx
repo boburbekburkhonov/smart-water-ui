@@ -12,6 +12,9 @@ import circleYellow from "../../assets/images/circle-yellow.png";
 import allIcon from "../../assets/images/all.png";
 import active from "../../assets/images/active.png";
 import passive from "../../assets/images/passive.png";
+import defective from "../../assets/images/defective.png";
+import warning from "../../assets/images/warning.png";
+import warningMessage from "../../assets/images/warning-message.png";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { api } from "../Api/Api";
@@ -850,6 +853,9 @@ const UserLastData = (prop) => {
          <div className="d-flex align-items-center m-0">
            <img src={passive} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{e.countNotWorkStations} ta</span>
          </div>
+         <div className="d-flex align-items-center m-0">
+           <img src={defective} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{e.countWorkingStationsDefectiveRegion} ta</span>
+         </div>
        </div>
      </div>
      </div>
@@ -867,6 +873,41 @@ const UserLastData = (prop) => {
 
   return (
     <section className="home-section py-3">
+      {/* MODAL DEFECT */}
+      <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+        <div className="modal-dialog modal-warning modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header modal-header-warning">
+              <div className="m-auto">
+                <img  src={warning} width={100} height={100} alt="warning" />
+              </div>
+            </div>
+            <div className="modal-body">
+              <h4 className="heading-modal-warning text-center">
+                Qurilmaning no sozligining sabablari!
+              </h4>
+              <ul className="m-0 p-0 ps-3">
+                <li className="d-flex align-items-center mt-4">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                    Qurilmaning sozlamalari noto'g'ri qilingan bo'lishi mumkin
+                  </p>
+                </li>
+                <li className="d-flex align-items-center mt-3">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                  Qurilmaga suv kirgan bo'lishi mumkin
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <div className="modal-footer modal-footer-warning">
+              <button className="btn btn-warning text-light w-25" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Ok</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container-fluid">
         <div className="card">
           {allStation?.length > 0 ? (
@@ -892,13 +933,16 @@ const UserLastData = (prop) => {
                         loaderFunc()
                       }}>
                         <div className="d-flex align-items-center m-0">
-                        <img src={allIcon} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countStationsByRegion} ta</span>
+                          <img src={allIcon} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countStationsByRegion} ta</span>
                         </div>
                         <div className="d-flex align-items-center m-0">
-                        <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsRegion} ta</span>
+                          <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsRegion} ta</span>
                         </div>
                         <div className="d-flex align-items-center m-0">
-                        <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countNotWorkingStationsRegion} ta</span>
+                          <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countNotWorkingStationsRegion} ta</span>
+                        </div>
+                        <div className="d-flex align-items-center m-0">
+                          <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsDefectiveRegion} ta</span>
                         </div>
                       </div>
                     </div>
@@ -1148,34 +1192,33 @@ const UserLastData = (prop) => {
                       {allStation?.map((e, i) => {
                         return (
                           <li className="user-last-data-list-item" key={i}>
-                            <a
-                              onClick={() => {
-                                navigate(
-                                  `/user/lastdata/${
-                                    whichStation == "allStation"
-                                      ? e._id
-                                      : e.stationsId
-                                  }`
-                                );
-                                localStorage.setItem(
-                                  "stationName",
-                                  whichStation == "allStation"
-                                    ? e.name
-                                    : e.station?.name
-                                );
-                                localStorage.setItem(
-                                  "location",
-                                  whichStation == "allStation"
-                                    ? e.location
-                                    : e.station?.location
-                                );
-                              }}
-                            >
+                            <a>
                               <div className="user-last-data-list-item-top d-flex align-items-center justify-content-between">
                                 <h3 className="fs-5 m-0">
                                   {whichStation == "allStation"
-                                    ? fixedNameStation(e.name)
-                                    : fixedNameStation(e.station?.name)}
+                                    ?
+                                    <div className="d-flex align-items-center justify-content-center">
+                                      <span>
+                                        {fixedNameStation(e.name)}
+                                      </span>
+                                      {
+                                        e.status == 1 && e.defective == true ?
+                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                        : null
+                                      }
+                                    </div>
+                                    :
+                                    <div className="d-flex align-items-center justify-content-center">
+                                      <span>
+                                        {fixedNameStation(e.station?.name)}
+                                      </span>
+                                      {
+                                        e.station?.status == 1 && e.station?.defective == true ?
+                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                        : null
+                                      }
+                                    </div>
+                                    }
                                 </h3>
                                 <div className="d-flex align-items-center justify-content-between">
                                   <p
@@ -1261,7 +1304,27 @@ const UserLastData = (prop) => {
                                 <span className={colorCard}></span>
                               )}
 
-                              <span className="">
+                              <span onClick={() => {
+                                navigate(
+                                  `/user/lastdata/${
+                                    whichStation == "allStation"
+                                      ? e._id
+                                      : e.stationsId
+                                  }`
+                                );
+                                localStorage.setItem(
+                                  "stationName",
+                                  whichStation == "allStation"
+                                    ? e.name
+                                    : e.station?.name
+                                );
+                                localStorage.setItem(
+                                  "location",
+                                  whichStation == "allStation"
+                                    ? e.location
+                                    : e.station?.location
+                                );
+                              }}>
                                 <div className="text-end mt-2">
                                   <div className="d-flex align-items-center">
                                     <p className="m-0 user-lastdata-level-desc">
