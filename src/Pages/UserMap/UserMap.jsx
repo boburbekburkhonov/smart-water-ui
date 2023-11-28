@@ -13,6 +13,8 @@ import locationRed from "../../assets/images/location-red.png";
 import locationGreen from "../../assets/images/location-green.png";
 import locationYellow from "../../assets/images/location-yellow.png";
 import locationOrange from "../../assets/images/location-orange.png";
+import warning from "../../assets/images/warning.png";
+import warningMessage from "../../assets/images/warning-message.png";
 import { api } from "../Api/Api";
 import axios from "axios";
 import "./UserMap.css";
@@ -205,6 +207,41 @@ const UserMap = () => {
 
   return (
     <section className="home-section py-3">
+      {/* MODAL DEFECT */}
+      <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+        <div className="modal-dialog modal-warning modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header modal-header-warning">
+              <div className="m-auto">
+                <img  src={warning} width={100} height={100} alt="warning" />
+              </div>
+            </div>
+            <div className="modal-body">
+              <h4 className="heading-modal-warning text-center">
+                Qurilmaning no sozligining sabablari!
+              </h4>
+              <ul className="m-0 p-0 ps-3">
+                <li className="d-flex align-items-center mt-4">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                    Qurilmaning sozlamalari noto'g'ri qilingan bo'lishi mumkin
+                  </p>
+                </li>
+                <li className="d-flex align-items-center mt-3">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                  Qurilmaga suv kirgan bo'lishi mumkin
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <div className="modal-footer modal-footer-warning">
+              <button className="btn btn-warning text-light w-25" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Ok</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container-fluid">
         <div>
           <div className="card">
@@ -522,7 +559,16 @@ const UserMap = () => {
                             width={25}
                             height={25}
                           />
-                          <p className="m-0 ms-2">{e.name}</p>
+                          <p className="m-0 ms-2 d-flex align-items-center justify-content-center">
+                            <span className="fs-6 fw-normal">
+                              {e.name}
+                            </span>
+                            {
+                              e?.status == 1 && e?.defective == true ?
+                              <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                              : null
+                            }
+                          </p>
                         </li>
                       );
                     })}
