@@ -1,0 +1,11 @@
+.sort-dashboard-list-item-admin {
+    max-width: 370px !important;
+}
+
+.dashboard-heading-balans-data {
+    padding: 8px 10px;
+    background: #ffffff !important;
+    border-radius: 10px;
+    max-width: 570px;
+    width: 100%;
+}

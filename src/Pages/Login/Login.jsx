@@ -25,16 +25,14 @@ const Login = () => {
           if (data.statusCode == 200) {
             window.localStorage.setItem("accessToken", data.data.accessToken);
             window.localStorage.setItem("refreshToken", data.data.refreshToken);
-            if (data.data.user?.role != "SUPERADMIN") {
+            if (data.data.user?.role != "SUPERADMIN"  && data.data.user?.role != "ADMIN") {
               window.location.href = "/user";
+            }else if (data.data.user?.role != "ADMIN") {
+              window.location.href = "/admin";
             }
           }
         });
     }
-    // if(localStorage.getItem('accessToken')){
-    //   window.location.href = "/user";
-
-    // }
   }, []);
 
   const loginUser = async (e) => {
@@ -63,8 +61,11 @@ const Login = () => {
       window.localStorage.setItem("checkRemember", checkRemember);
       window.localStorage.setItem("accessToken", response.data.accessToken);
       window.localStorage.setItem("refreshToken", response.data.refreshToken);
-      if (response.data.user?.role != "SUPERADMIN") {
+      console.log(response.data.user?.role);
+      if (response.data.user?.role != "SUPERADMIN" && response.data.user?.role != "ADMIN") {
         window.location.href = "/user";
+      }else if (response.data.user?.role == "ADMIN"){
+        window.location.href = "/admin";
       }
     } else {
       setError(true);
