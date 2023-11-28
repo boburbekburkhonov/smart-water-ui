@@ -18,6 +18,8 @@ import locationRed from "../../assets/images/location-red.png";
 import locationGreen from "../../assets/images/location-green.png";
 import locationYellow from "../../assets/images/location-yellow.png";
 import locationOrange from "../../assets/images/location-orange.png";
+import warning from "../../assets/images/warning.png";
+import warningMessage from "../../assets/images/warning-message.png";
 import moment from "moment";
 import "moment/dist/locale/uz-latn";
 import jsPDF from "jspdf";
@@ -1487,6 +1489,41 @@ const UserData = () => {
         </div>
       </div>
 
+      {/* MODAL DEFECT */}
+      <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+        <div className="modal-dialog modal-warning modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header modal-header-warning">
+              <div className="m-auto">
+                <img  src={warning} width={100} height={100} alt="warning" />
+              </div>
+            </div>
+            <div className="modal-body">
+              <h4 className="heading-modal-warning text-center">
+                Qurilmaning no sozligining sabablari!
+              </h4>
+              <ul className="m-0 p-0 ps-3">
+                <li className="d-flex align-items-center mt-4">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                    Qurilmaning sozlamalari noto'g'ri qilingan bo'lishi mumkin
+                  </p>
+                </li>
+                <li className="d-flex align-items-center mt-3">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                  Qurilmaga suv kirgan bo'lishi mumkin
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <div className="modal-footer modal-footer-warning">
+              <button className="btn btn-warning text-light w-25" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Ok</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <section className="home-section py-3 ">
         <div className="container-fluid">
           <div className="card-user-data card--open">
@@ -1691,7 +1728,16 @@ const UserData = () => {
                                           className="text-start sticky fix-with"
                                           style={{ left: "57px" }}
                                         >
-                                          {e.name}
+                                          <div className="d-flex align-items-center justify-content-center">
+                                            <span className="fs-6 fw-normal">
+                                              {e.name}
+                                            </span>
+                                            {
+                                              e.status == 1 && e.defective == true ?
+                                              <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                                              : null
+                                            }
+                                          </div>
                                         </td>
                                         {valueTodayTable.map((d, w) => {
                                           const existedValue = !searchDate
@@ -1837,7 +1883,16 @@ const UserData = () => {
                                         className="text-start sticky fix-with"
                                         style={{ left: "57px" }}
                                       >
-                                        {e.name}
+                                        <div className="d-flex align-items-center justify-content-center">
+                                          <span className="fs-6 fw-normal">
+                                            {e.name}
+                                          </span>
+                                          {
+                                            e.status == 1 && e.defective == true ?
+                                            <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                                            : null
+                                          }
+                                        </div>
                                       </td>
                                       {valueTodayTable.map((d, w) => {
                                         const existedValue =
@@ -1998,7 +2053,16 @@ const UserData = () => {
                                           className="text-start sticky fix-with"
                                           style={{ left: "57px" }}
                                         >
-                                          {e.name}
+                                          <div className="d-flex align-items-center justify-content-center">
+                                            <span className="fs-6 fw-normal">
+                                              {e.name}
+                                            </span>
+                                            {
+                                              e.status == 1 && e.defective == true ?
+                                              <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                                              : null
+                                            }
+                                          </div>
                                         </td>
                                         {valueMonth.map((d, w) => {
                                           const existedValue = e.dailyData.find(
@@ -2139,7 +2203,16 @@ const UserData = () => {
                                         className="text-start sticky fix-with"
                                         style={{ left: "57px" }}
                                       >
-                                        {e.name}
+                                        <div className="d-flex align-items-center justify-content-center">
+                                          <span className="fs-6 fw-normal">
+                                            {e.name}
+                                          </span>
+                                          {
+                                            e.status == 1 && e.defective == true ?
+                                            <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                                            : null
+                                          }
+                                        </div>
                                       </td>
                                       {valueYear.map((d, w) => {
                                         const existedValue = e.monthlyData.find(
@@ -2247,7 +2320,16 @@ const UserData = () => {
                                   height={20}
                                 />
 
-                                <p className="m-0 ms-2 fs-6">{e.name}</p>
+                                <p className="m-0 ms-2 fs-6 d-flex align-items-center justify-content-center">
+                                  <span className="fs-6 fw-normal">
+                                    {e.name}
+                                  </span>
+                                  {
+                                    e.status == 1 && e.defective == true ?
+                                    <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                                    : null
+                                  }
+                                </p>
                               </div>
 
                               <p className="m-0 text-danger">

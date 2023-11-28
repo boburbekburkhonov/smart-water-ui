@@ -834,7 +834,7 @@ const UserDashboard = (prop) => {
                         <tr key={i}>
                           <td className={`text-center fw-bold`}>
                             <div className="d-flex justify-content-center align-items-center">
-                              <span>
+                              <span className="fs-6">
                                 {e?.name}
                               </span>
                               {
@@ -894,7 +894,7 @@ const UserDashboard = (prop) => {
                         <tr key={i}>
                           <td className={`text-center fw-bold`}>
                             <div className="d-flex justify-content-center align-items-center">
-                              <span>
+                              <span className="fs-6">
                                 {e?.station?.name}
                               </span>
                               {
@@ -1005,7 +1005,7 @@ const UserDashboard = (prop) => {
                         <tr key={i}>
                           <td className="text-center fw-bold">
                             <div className="d-flex justify-content-center align-items-center">
-                              <span>
+                              <span className="fs-6">
                                 {e?.name}
                               </span>
                               {
@@ -1640,7 +1640,7 @@ const UserDashboard = (prop) => {
                                   whichStation == "notWorkStation"
                                     ?
                                     <div className="d-flex align-items-center justify-content-center">
-                                      <span>
+                                      <span className="fs-6">
                                         {e?.name}
                                       </span>
                                       {
@@ -1651,7 +1651,7 @@ const UserDashboard = (prop) => {
                                     </div>
                                     :
                                     <div className="d-flex">
-                                      <span>
+                                      <span className="fs-6">
                                         {e.station?.name}
                                       </span>
                                       {
@@ -1786,7 +1786,7 @@ const UserDashboard = (prop) => {
                               <tr key={i}>
                                 <td className="text-center fw-bold">
                                   <div className="d-flex justify-content-center align-items-cente">
-                                    <span>
+                                    <span className="fs-6">
                                       {e?.name}
                                     </span>
                                     {
