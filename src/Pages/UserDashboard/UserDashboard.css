@@ -197,3 +197,19 @@
 .user-dashboard-list-statis-item {
   margin: 20px !important;
 }
+
+.modal-header-warning {
+  border-bottom: none;
+}
+
+.modal-footer-warning {
+  border-top: none;
+}
+
+.heading-modal-warning {
+  font-size: 22px;
+}
+
+.modal-warning {
+  max-width: 30% !important;
+}

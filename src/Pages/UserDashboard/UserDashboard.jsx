@@ -11,6 +11,9 @@ import fullScreen from "../../assets/images/fullscreen.png";
 import all from "../../assets/images/all.png";
 import active from "../../assets/images/active.png";
 import passive from "../../assets/images/passive.png";
+import defective from "../../assets/images/defective.png";
+import warning from "../../assets/images/warning.png";
+import warningMessage from "../../assets/images/warning-message.png";
 import { useEffect } from "react";
 import { api } from "../Api/Api";
 import { useState } from "react";
@@ -728,6 +731,9 @@ const UserDashboard = (prop) => {
          <div className="d-flex align-items-center m-0">
            <img src={passive} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{e.countNotWorkStations} ta</span>
          </div>
+         <div className="d-flex align-items-center m-0">
+           <img src={defective} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{e.countWorkingStationsDefectiveRegion} ta</span>
+         </div>
        </div>
      </div>
      </div>
@@ -826,7 +832,18 @@ const UserDashboard = (prop) => {
                       return whichStation == "allStation" ||
                         whichStation == "notWorkStation" ? (
                         <tr key={i}>
-                          <td className={`text-center fw-bold`}>{e?.name}</td>
+                          <td className={`text-center fw-bold`}>
+                            <div className="d-flex justify-content-center align-items-center">
+                              <span>
+                                {e?.name}
+                              </span>
+                              {
+                                e?.status == 1 && e?.defective == true ?
+                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                : null
+                              }
+                            </div>
+                          </td>
                           <td className={`text-center fw-bold`}>
                             {e?.battery}
                           </td>
@@ -876,7 +893,16 @@ const UserDashboard = (prop) => {
                       ) : (
                         <tr key={i}>
                           <td className={`text-center fw-bold`}>
-                            {e?.station?.name}
+                            <div className="d-flex justify-content-center align-items-center">
+                              <span>
+                                {e?.station?.name}
+                              </span>
+                              {
+                                e.station?.status == 1 && e.station?.defective == true ?
+                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                : null
+                              }
+                            </div>
                           </td>
                           <td className={`text-center fw-bold`}>
                             {e?.station?.battery}
@@ -977,7 +1003,18 @@ const UserDashboard = (prop) => {
                     {viewStationByChar?.map((e, i) => {
                       return (
                         <tr key={i}>
-                          <td className="text-center fw-bold">{e?.name}</td>
+                          <td className="text-center fw-bold">
+                            <div className="d-flex justify-content-center align-items-center">
+                              <span>
+                                {e?.name}
+                              </span>
+                              {
+                                e?.status == 1 && e?.defective == true ?
+                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                : null
+                              }
+                            </div>
+                          </td>
                           <td className="text-center fw-bold">{e.imel}</td>
                           <td className="text-center fw-bold">{e.battery}</td>
                           <td className="text-center fw-bold">{e.signal}</td>
@@ -1002,6 +1039,42 @@ const UserDashboard = (prop) => {
           </div>
         </div>
       </div>
+
+      {/* MODAL DEFECT */}
+      <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+        <div className="modal-dialog modal-warning modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header modal-header-warning">
+              <div className="m-auto">
+                <img  src={warning} width={100} height={100} alt="warning" />
+              </div>
+            </div>
+            <div className="modal-body">
+              <h4 className="heading-modal-warning text-center">
+                Qurilmaning no sozligining sabablari!
+              </h4>
+              <ul className="m-0 p-0 ps-3">
+                <li className="d-flex align-items-center mt-4">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                    Qurilmaning sozlamalari noto'g'ri qilingan bo'lishi mumkin
+                  </p>
+                </li>
+                <li className="d-flex align-items-center mt-3">
+                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                  <p className="m-0 ms-2">
+                  Qurilmaga suv kirgan bo'lishi mumkin
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <div className="modal-footer modal-footer-warning">
+              <button className="btn btn-warning text-light w-25" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Ok</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container-fluid p-0">
         <section className="section-dashboard">
           {viewStation?.length > 0 ? (
@@ -1024,13 +1097,16 @@ const UserDashboard = (prop) => {
                         loaderFunc()
                       }}>
                         <div className="d-flex align-items-center m-0">
-                        <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countStationsByRegion} ta</span>
+                          <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countStationsByRegion} ta</span>
                         </div>
                         <div className="d-flex align-items-center m-0">
-                        <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsRegion} ta</span>
+                          <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsRegion} ta</span>
                         </div>
                         <div className="d-flex align-items-center m-0">
-                        <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countNotWorkingStationsRegion} ta</span>
+                          <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countNotWorkingStationsRegion} ta</span>
+                        </div>
+                        <div className="d-flex align-items-center m-0">
+                          <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsDefectiveRegion} ta</span>
                         </div>
                       </div>
                     </div>
@@ -1562,8 +1638,29 @@ const UserDashboard = (prop) => {
                                 <td className="text-center fw-bold">
                                   {whichStation == "allStation" ||
                                   whichStation == "notWorkStation"
-                                    ? e?.name
-                                    : e.station?.name}
+                                    ?
+                                    <div className="d-flex align-items-center justify-content-center">
+                                      <span>
+                                        {e?.name}
+                                      </span>
+                                      {
+                                        e.status == 1 && e.defective == true ?
+                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                        : null
+                                      }
+                                    </div>
+                                    :
+                                    <div className="d-flex">
+                                      <span>
+                                        {e.station?.name}
+                                      </span>
+                                      {
+                                        e.station?.status == 1 && e.station?.defective == true ?
+                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                        : null
+                                      }
+                                    </div>
+                                    }
                                 </td>
                                 <td className="text-center fw-bold">
                                   {whichStation == "allStation" &&
@@ -1688,7 +1785,16 @@ const UserDashboard = (prop) => {
                             return (
                               <tr key={i}>
                                 <td className="text-center fw-bold">
-                                  {e?.name}
+                                  <div className="d-flex justify-content-center align-items-cente">
+                                    <span>
+                                      {e?.name}
+                                    </span>
+                                    {
+                                      e?.status == 1 && e?.defective == true ?
+                                      <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                      : null
+                                    }
+                                  </div>
                                 </td>
                                 <td className="text-center fw-bold">
                                   {e.battery}
