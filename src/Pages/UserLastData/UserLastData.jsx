@@ -863,8 +863,8 @@ const UserLastData = (prop) => {
 
   // ! FIXED STATION NAME
   const fixedNameStation = name => {
-    const fixedName = name.split('_')
-    if(fixedName.length > 2){
+    const fixedName = name?.split('_')
+    if(fixedName?.length > 2){
       return `${fixedName[0]}_${fixedName[1]}`
     }else {
       return name
@@ -1333,11 +1333,11 @@ const UserLastData = (prop) => {
                                     <span className="fw-bold text-end w-100 user-lastdata-level-desc">
                                       {whichStation == "allStation" &&
                                       e.lastData != undefined
-                                        ? Number(e.lastData?.level).toFixed()
+                                        ? `${Number(e.lastData?.level).toFixed()} sm`
                                         : e?.level != undefined
-                                        ? Number(e?.level).toFixed()
-                                        : ""}
-                                      sm
+                                        ? `${Number(e?.level).toFixed()} sm`
+                                        : "-"}
+
                                     </span>
                                   </div>
                                   <div className="d-flex align-items-center">
@@ -1347,11 +1347,10 @@ const UserLastData = (prop) => {
                                     <span className="fw-bold text-end w-100 user-lastdata-level-desc">
                                       {whichStation == "allStation" &&
                                       e.lastData != undefined
-                                        ? Number(e.lastData?.volume).toFixed()
+                                        ? `${Number(e.lastData?.volume).toFixed()} m³/s`
                                         : e?.volume != undefined
-                                        ? Number(e?.volume).toFixed()
-                                        : ""}{" "}
-                                      m³/s
+                                        ? `${Number(e?.volume).toFixed()} m³/s`
+                                        : "-"}
                                     </span>
                                   </div>
                                   <div className="d-flex align-items-center">
@@ -1366,7 +1365,7 @@ const UserLastData = (prop) => {
                                           ).toFixed()
                                         : e?.correction != undefined
                                         ? Number(e?.correction).toFixed()
-                                        : ""}{" "}
+                                        : "-"}
                                     </span>
                                   </div>
                                 </div>
