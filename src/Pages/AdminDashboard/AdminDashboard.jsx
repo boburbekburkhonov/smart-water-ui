@@ -123,6 +123,28 @@ const AdminDashboard = () => {
   );
 
   useEffect(() => {
+    // ! ALL REGION
+    customFetch
+    .get(`/regions/all`)
+    .then((data) => setAllRegion(data.data.regions))
+
+    // ! ALL BALANS ORG
+    customFetch
+    .get(`/balance-organizations/all-find`)
+    .then((data) => setAllBalansOrg(data.data.balanceOrganizations))
+
+    // ! STATION COUNT BY ADMIN
+    customFetch
+    .get(`/stations/getStationsCountByAdmin`)
+    .then((data) => setStationsCountByAdmin(data.data))
+
+    // ! STATION COUNT BY REGION
+    customFetch
+      .get(`/stations/getStationsCountByRegion?regionNumber=1`)
+      .then((data) => {
+        setStationsCountByRegion(data.data)
+    })
+
     const userDashboardFunc = async () => {
       // ! STATION STATISTIC
       const requestStationStatistic = await customFetch.get(
@@ -135,30 +157,8 @@ const AdminDashboard = () => {
 
     // ! STATISTIC BY BATTERY
     customFetch
-      .get(`/stations/getStatisticStationsByBattery`)
+      .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=1`)
       .then((data) => setStationBattery(data.data.data));
-
-    // ! STATION COUNT BY ADMIN
-    customFetch
-      .get(`/stations/getStationsCountByAdmin`)
-      .then((data) => setStationsCountByAdmin(data.data))
-
-    // ! STATION COUNT BY REGION
-    customFetch
-      .get(`/stations/getStationsCountByRegion?regionNumber=1`)
-      .then((data) => {
-        setStationsCountByRegion(data.data)
-    })
-
-    // ! ALL BALANS ORG
-    customFetch
-    .get(`/balance-organizations/all-find`)
-    .then((data) => setAllBalansOrg(data.data.balanceOrganizations))
-
-    // ! ALL REGION
-    customFetch
-    .get(`/regions/all`)
-    .then((data) => setAllRegion(data.data.regions))
   }, []);
 
   useEffect(() => {
@@ -435,67 +435,65 @@ const AdminDashboard = () => {
         setTableTitle("Batareya quvvati 90% dan ko'p bo'lgan stansiyalar");
         // ! LIMIT
         customFetch.get(
-          `/last-data/getGreaterAndLessByStations?great=89&page=1&perPage=10&less=101`)
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=1&great=89&less=101`)
           .then((data) => {
-            console.log(data.data.data);
             setViewStationByCharLimit(data.data.data.data)
           });
 
         // !----------------------------------------------------------------
 
-        customFetch.get(`/last-data/getGreaterAndLessByStations?great=89&less=101`)
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=1&great=89&less=101`)
           .then((data) => setViewStationByChar(data.data.data.data));
       } else if (index == 1) {
         setTableTitle("Batareya quvvati 75% dan ko'p bo'lgan stansiyalar");
 
         // ! LIMIT
         customFetch.get(
-          `/last-data/getGreaterAndLessByStations?great=74&page=1&perPage=10&less=90`)
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=1&great=74&less=90`)
           .then((data) => setViewStationByCharLimit(data.data.data.data));
 
         // !----------------------------------------------------------------
 
-        customFetch.get(`/last-data/getGreaterAndLessByStations?great=74&less=90`)
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=1&great=74&less=90`)
           .then((data) => setViewStationByChar(data.data.data.data));
       } else if (index == 2) {
         setTableTitle("Batareya quvvati 50% dan ko'p bo'lgan stansiyalar");
 
         // ! LIMIT
         customFetch.get(
-          `/last-data/getGreaterAndLessByStations?great=49&page=1&perPage=10&less=75`)
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=1&great=49&less=75`)
           .then((data) => setViewStationByCharLimit(data.data.data.data));
 
         // !----------------------------------------------------------------
-
-        customFetch.get(`/last-data/getGreaterAndLessByStations?great=49&less=75`)
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=1&great=49&less=75`)
           .then((data) => setViewStationByChar(data.data.data.data));
       } else if (index == 3) {
         setTableTitle("Batareya quvvati 25% dan ko'p bo'lgan stansiyalar");
 
         // ! LIMIT
         customFetch.get(
-          `/last-data/getGreaterAndLessByStations?great=24&page=1&perPage=10&less=50`)
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=1&great=24&less=50`)
           .then((data) => setViewStationByCharLimit(data.data.data.data));
 
         // !----------------------------------------------------------------
 
-        customFetch.get(`${api}/last-data/getGreaterAndLessByStations?great=24&less=50`)
+        customFetch.get(`/last-data/getGreaterAndLessByStationsByOrganization?organization=1&great=24&less=50`)
           .then((data) => setViewStationByChar(data.data.data.data));
       } else if (index == 4) {
         setTableTitle("Batareya quvvati 25% dan kam bo'lgan stansiyalar");
 
         // ! LIMIT
         customFetch.get(
-          `/last-data/getGreaterAndLessByStations?great=-1&page=1&perPage=10&less=25`)
+          `/last-data/getGreaterAndLessByStationsByOrganization?page=1&perPage=10&organization=1&great=-1&less=25`)
           .then((data) => {
             setViewStationByCharLimit(data.data.data.data)
           });
 
         // !----------------------------------------------------------------
 
-        customFetch.get(`${api}/last-data/getGreaterAndLessByStations?great=-1&less=25`)
+        customFetch.get(`${api}/last-data/getGreaterAndLessByStationsByOrganization?organization=1&great=-1&less=25`)
           .then((data) => setViewStationByChar(data.data.data.data));
-      }
+        }
     }else {
       if (index == 0) {
         setTableTitle("Batareya quvvati 90% dan ko'p bo'lgan stansiyalar");
@@ -655,13 +653,13 @@ const AdminDashboard = () => {
       const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
       XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
+      const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+      nameExcelFile.join('')
 
       if (viewStation.length > 0) {
         XLSX.writeFile(
           workBook,
-          `${role == 'USER' ? name
-          : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}`
-          : balanceOrgName}ning ${tableTitle} ${resultDate}.xlsx`
+          `${nameExcelFile} ${tableTitle} ${resultDate}.xlsx`
         );
       }
     } else if (dataOrStation == "station") {
@@ -691,10 +689,13 @@ const AdminDashboard = () => {
 
       XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
 
+      const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+      nameExcelFile.join('')
+
       if (viewStationByChar.length > 0) {
         XLSX.writeFile(
           workBook,
-          `${role == 'USER' ? name : balanceOrgName} ning ${tableTitle} ${resultDate}.xlsx`
+          `${nameExcelFile} ${tableTitle} ${resultDate}.xlsx`
         );
       }
     }
@@ -792,8 +793,7 @@ const AdminDashboard = () => {
       .then((data) => setStationBattery(data.data.data));
     }
   }
-  console.log(firstStatistic);
-  console.log(selectBalansOrg);
+
   const items = stationsCountByRegion?.gruopOrganization?.map((e, i) => {
     return  <div className="sort-dashboard-list-item ms-3" onClick={(s) => {
         setSelectBalansOrg(true)
@@ -801,6 +801,7 @@ const AdminDashboard = () => {
         getStationStatisByBalansOrg(e.balance_organization_id)
         setWhichStation('allStation')
         setTableTitle("Umumiy stansiyalar soni");
+        setTitleBalansOrgData(`${foundBalansOrgName(e.balance_organization_id)} ga tegishli ma'lumotlar`)
         setDataOrStation('data')
         loaderFunc()
     }}>
@@ -839,7 +840,14 @@ const AdminDashboard = () => {
         customFetch
         .get(`/last-data/getStatisticStationsByOrganization?organization=1`)
         .then((data) => settationStatistic(data.data.data))
+
+        // ! STATISTIC BY BATTERY
+        customFetch
+        .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=1`)
+        .then((data) => setStationBattery(data.data.data));
+
         setTitleBalansOrgData(`${foundBalansOrgName(1)} ga tegishli ma'lumotlar`)
+        setBalansOrgId(undefined)
     }else {
         // ! STATION COUNT BY REGION
         const getStationByRegionId = async () => {
@@ -855,6 +863,11 @@ const AdminDashboard = () => {
             settationStatistic(requestStationStatistic.data.data);
             setTitleBalansOrgData(`${foundBalansOrgName(balansOrgId)} ga tegishli ma'lumotlar`)
 
+            // ! STATISTIC BY BATTERY
+            customFetch
+            .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=${balansOrgId}`)
+            .then((data) => setStationBattery(data.data.data));
+
             // ! VIEW STATION
             customFetch
               .get(
@@ -869,6 +882,7 @@ const AdminDashboard = () => {
               .get(`/last-data/getLastDataByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
               .then((data) => setViewStationLimit(data.data.data)
               );
+            setBalansOrgId(balansOrgId)
         }
         getStationByRegionId()
     }
@@ -1226,6 +1240,9 @@ const AdminDashboard = () => {
                                 setTitleBalansOrg(`Jami ${foundRegionName(1)} balans tashkilotlari`)
                                 setFirstStatistic(true)
                                 setSelectBalansOrg(true)
+                                setWhichStation("allStation");
+                                setDataOrStation("data");
+                                setTableTitle("Umumiy stansiyalar soni");
                             }}>
                                 <div className="d-flex align-items-center m-0">
                                     <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByAdmin.countStations} ta</span>
@@ -1249,6 +1266,9 @@ const AdminDashboard = () => {
                                         setTitleBalansOrg(`Jami ${foundRegionName(e.region_id)} balans tashkilotlari`)
                                         setFirstStatistic(false)
                                         setSelectBalansOrg(false)
+                                        setWhichStation("allStation")
+                                        setDataOrStation("data");
+                                        setTableTitle("Umumiy stansiyalar soni");
                                     }}>
                                         <div className="sort-dashboard-wrapper">
                                         <h6>
@@ -1279,14 +1299,7 @@ const AdminDashboard = () => {
                       <h2 className="dashboard-heading ms-2 dashboard-heading-role">
                       {titleBalansOrg}
                       </h2>
-                      <div className="region-heading-statis-wrapper d-flex cursor" onClick={() => {
-                        setBalansOrgId(undefined)
-                        getStationStatisByBalansOrg()
-                        setWhichStation("allStation");
-                        setTableTitle("Umumiy stansiyalar soni");
-                        setDataOrStation('data')
-                        loaderFunc()
-                      }}>
+                      <div className="region-heading-statis-wrapper d-flex cursor">
                         <div className="d-flex align-items-center m-0">
                           <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
                         </div>
@@ -1303,7 +1316,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                  <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
+                  <ol className="list-unstyled sort-dashboard-list m-0 my-4 d-flex align-items-center justify-content-center">
                     <AliceCarousel
                       autoPlay={true}
                       // infinite={true}
@@ -1329,6 +1342,7 @@ const AdminDashboard = () => {
                             setWhichStation("allStation");
                             setTableTitle("Umumiy stansiyalar soni");
                             setDataOrStation("data");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1359,6 +1373,7 @@ const AdminDashboard = () => {
                             setWhichStation("todayStation");
                             setTableTitle("Bugun ishlayotganlar stansiyalar");
                             setDataOrStation("data");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1394,6 +1409,7 @@ const AdminDashboard = () => {
                             setWhichStation("withinThreeDayStation");
                             setTableTitle("3 kun ichida ishlagan stansiyalar");
                             setDataOrStation("data");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1429,6 +1445,7 @@ const AdminDashboard = () => {
                             setWhichStation("totalMonthWorkStation");
                             setTableTitle("Oxirgi oy ishlagan stansiyalar");
                             setDataOrStation("data");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1465,6 +1482,7 @@ const AdminDashboard = () => {
                             setWhichStation("totalMoreWorkStations");
                             setTableTitle("Uzoq vaqt ishlamagan qurilmalar");
                             setDataOrStation("data");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1501,6 +1519,7 @@ const AdminDashboard = () => {
                             setWhichStation("notWorkStation");
                             setTableTitle("Umuman ishlamagan stansiyalar");
                             setDataOrStation("data");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
