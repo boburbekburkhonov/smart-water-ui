@@ -46,10 +46,10 @@ const AdminLastData = () => {
   const balanceOrgName = localStorage.getItem("balanceOrgName");
   const [balansOrgId, setBalansOrgId] = useState();
   const [regionName, setRegionName] = useState();
-  const [selectBalansOrg, setSelectBalansOrg] = useState(true);
   const [titleBalansOrg, setTitleBalansOrg] = useState("Jami Qoraqalpog‘iston Respublikasi balans tashkilotlari");
   const [titleBalansOrgData, setTitleBalansOrgData] = useState("Amudaryo TIB ga tegishli ma'lumotlar");
-
+  const [firstStatistic, setFirstStatistic] = useState(true);
+  const [selectBalansOrg, setSelectBalansOrg] = useState(true);
 
   // ! CUSTOM FETCH
   const customFetch = axios.create({
@@ -155,131 +155,122 @@ const AdminLastData = () => {
   }, []);
 
   useEffect(() => {
-    if(balansOrgId == undefined){
-      if (whichStation == "allStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/getLastData?page=1&perPage=12`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "todayStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/todayWorkStations?page=1&perPage=12`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "withinThreeDayStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/treeDayWorkStations?page=1&perPage=12`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "totalMonthWorkStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/lastMonthWorkStations?page=1&perPage=12`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "totalMoreWorkStations") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/moreWorkStations?page=1&perPage=12`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "notWorkStation") {
-        // ! LIMIT
-        customFetch
-          .get(`${api}/last-data/getNotLastDataStations?page=1&perPage=12`)
-          .then((res) => res.json())
-          .then((data) => {
-            setAllStation(data.data.data.docs)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      }
-    }else {
-      if (whichStation == "allStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/getLastDataByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "todayStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/todayWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "withinThreeDayStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/treeDayWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "totalMonthWorkStation") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/lastMonthWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
-      } else if (whichStation == "totalMoreWorkStations") {
-        // ! LIMIT
-        customFetch
-          .get(`/last-data/moreWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
-          .then((data) => {
-            setAllStation(data.data.data)
-            setTotalPages(
-              data.data.totalPages
-            )
-          });
+    if(selectBalansOrg){
+      if(firstStatistic){
+        if (whichStation == "allStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/getLastDataByOrganization?page=1&perPage=12&organization=1`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "todayStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/todayWorkStationsByOrganization?page=1&perPage=12&organization=1`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "withinThreeDayStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/treeDayWorkStationsByOrganization?page=1&perPage=12&organization=1`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "totalMonthWorkStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/lastMonthWorkStationsByOrganization?page=1&perPage=12&organization=1`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "totalMoreWorkStations") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/moreWorkStationsByOrganization?page=1&perPage=12&organization=$1`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        }
+      } else if (balansOrgId != undefined && firstStatistic == false) {
+        if (whichStation == "allStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/getLastDataByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "todayStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/todayWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "withinThreeDayStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/treeDayWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "totalMonthWorkStation") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/lastMonthWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        } else if (whichStation == "totalMoreWorkStations") {
+          // ! LIMIT
+          customFetch
+            .get(`/last-data/moreWorkStationsByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
+        }
       }
     }
   }, [stationStatistic, whichStation]);
 
   const handlePageChange = (selectedPage) => {
-    if(balansOrgId == undefined){
+    if(firstStatistic){
       if (whichStation == "allStation") {
         // ! LIMIT
         customFetch
           .get(
-            `/last-data/getLastData?page=${selectedPage.selected + 1}&perPage=12`
+            `/last-data/getLastDataByOrganization?page=${selectedPage.selected + 1}&perPage=12&organization=1`
           )
           .then((data) =>
           setAllStation(data.data.data)
@@ -288,9 +279,9 @@ const AdminLastData = () => {
         // ! LIMIT
         customFetch
           .get(
-            `/last-data/todayWorkStations?page=${
+            `/last-data/todayWorkStationsByOrganization?page=${
               selectedPage.selected + 1
-            }&perPage=12`
+            }&perPage=12&organization=1`
           )
           .then((data) => {
             setAllStation(data.data.data);
@@ -299,9 +290,9 @@ const AdminLastData = () => {
         // ! LIMIT
         customFetch
           .get(
-            `/last-data/treeDayWorkStations?page=${
+            `/last-data/treeDayWorkStationsByOrganization?page=${
               selectedPage.selected + 1
-            }&perPage=12`
+            }&perPage=12&organization=1`
           )
           .then((data) => {
             setAllStation(data.data.data);
@@ -310,9 +301,9 @@ const AdminLastData = () => {
         // ! LIMIT
         customFetch
           .get(
-            `/last-data/lastMonthWorkStations?page=${
+            `/last-data/lastMonthWorkStationsByOrganization?page=${
               selectedPage.selected + 1
-            }&perPage=12`
+            }&perPage=12&organization=1`
           )
           .then((data) => {
             setAllStation(data.data.data);
@@ -321,15 +312,15 @@ const AdminLastData = () => {
         // ! LIMIT
         customFetch
           .get(
-            `/last-data/moreWorkStations?page=${
+            `/last-data/moreWorkStationsByOrganization?page=${
               selectedPage.selected + 1
-            }&perPage=12`
+            }&perPage=12&organization=1`
           )
           .then((data) => {
             setAllStation(data.data.data);
           });
       }
-    }else {
+    }else if (balansOrgId != undefined && firstStatistic == false){
       if (whichStation == "allStation") {
         // ! LIMIT
         customFetch
@@ -466,43 +457,62 @@ const AdminLastData = () => {
 
     if (whichStation == "allStation") {
       const userAllDataFunc = async () => {
-        const request = await customFetch.get(
-          `/last-data/getLastData?page=1&perPage=${stationStatistic.totalStationsCount}`
-        );
-
         const resultExcelData = [];
+        if(firstStatistic){
+          const request = await customFetch.get(
+            `/last-data/getLastDataByOrganization?page=1&perPage=${stationStatistic.totalStationsCount}&organization=1`
+          );
 
-        request.data.data.forEach((e) => {
-          resultExcelData.push({
-            nomi: e.name,
-            imei: e.imel,
-            battery: e.battery,
-            lokatsiya: e.location,
-            programma_versiyasi: e.programVersion,
-            qurilma_telefon_raqami: e.devicePhoneNum,
-            status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
-            integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
-            [sath]: Number(e.lastData?.level).toFixed(2),
-            [hajm]: Number(e.lastData?.volume).toFixed(2),
-            [tuzatish]: Number(e.lastData?.correction),
-            sana: e.lastData?.date,
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.name,
+              imei: e.imel,
+              battery: e.battery,
+              lokatsiya: e.location,
+              programma_versiyasi: e.programVersion,
+              qurilma_telefon_raqami: e.devicePhoneNum,
+              status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: e.lastData != undefined ? Number(e.lastData?.level).toFixed(2) : '-',
+              [hajm]: e.lastData != undefined ? Number(e.lastData?.volume).toFixed(2) : '-',
+              [tuzatish]: e.lastData != undefined ? Number(e.lastData?.correction) : '-',
+              sana: e.lastData != undefined ? e.lastData?.date  : '-',
+            });
           });
-        });
+        }else if(balansOrgId != undefined && firstStatistic == false){
+          const request = await customFetch.get(
+            `/last-data/getLastDataByOrganization?page=1&perPage=${stationStatistic.totalStationsCount}&organization=${balansOrgId}`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.name,
+              imei: e.imel,
+              battery: e.battery,
+              lokatsiya: e.location,
+              programma_versiyasi: e.programVersion,
+              qurilma_telefon_raqami: e.devicePhoneNum,
+              status: e.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya: e?.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: e.lastData != undefined ? Number(e.lastData?.level).toFixed(2) : '-',
+              [hajm]: e.lastData != undefined ? Number(e.lastData?.volume).toFixed(2) : '-',
+              [tuzatish]: e.lastData != undefined ? Number(e.lastData?.correction) : '-',
+              sana: e.lastData != undefined ? e.lastData?.date  : '-',
+            });
+          });
+        }
 
         const workBook = XLSX.utils.book_new();
         const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
+        const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+        nameExcelFile.join('')
 
-        if (request.data.data.length > 0) {
+        if (resultExcelData.length > 0) {
           XLSX.writeFile(
             workBook,
-            `${
-              role == "USER" ? name
-              : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}`
-              :
-              balanceOrgName
-            } ning umumiy stansiya ma'lumotlari ${resultDate}.xlsx`
+            `${nameExcelFile} umumiy stansiya ma'lumotlari ${resultDate}.xlsx`
           );
         }
       };
@@ -510,42 +520,65 @@ const AdminLastData = () => {
       userAllDataFunc();
     } else if (whichStation == "todayStation") {
       const userTodayDataFunc = async () => {
-        const request = await customFetch.get(
-          `/last-data/todayWorkStations?page=1&perPage=${stationStatistic.totalTodayWorkStationsCount}`
-        );
-
         const resultExcelData = [];
-        request.data.data.forEach((e) => {
-          resultExcelData.push({
-            nomi: e.station.name,
-            imei: e.station.imel,
-            battery: e.station.battery,
-            lokatsiya: e.station.location,
-            programma_versiyasi: e.station.programVersion,
-            qurilma_telefon_raqami: e.station.devicePhoneNum,
-            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
-            integratsiya:
-              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
-            [sath]: Number(e.level).toFixed(2),
-            [hajm]: Number(e.volume).toFixed(2),
-            [tuzatish]: Number(e.correction),
-            sana: e.date,
+
+        if(firstStatistic){
+          const request = await customFetch.get(
+            `/last-data/todayWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalTodayWorkStationsCount}&organization=1`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
           });
-        });
+        }else if(balansOrgId != undefined && firstStatistic == false){
+          const request = await customFetch.get(
+            `/last-data/todayWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalTodayWorkStationsCount}&organization=${balansOrgId}`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
+          });
+        }
 
         const workBook = XLSX.utils.book_new();
         const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
+        const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+        nameExcelFile.join('')
 
-        if (request.data.data.length > 0) {
+        if (resultExcelData.length > 0) {
           XLSX.writeFile(
             workBook,
-            `${
-              role == "USER" ? name
-              : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}`
-              : balanceOrgName
-            } ning bugun kelgan ma'lumotlari ${resultDate}.xlsx`
+            `${nameExcelFile} bugun kelgan ma'lumotlari ${resultDate}.xlsx`
           );
         }
       };
@@ -553,42 +586,65 @@ const AdminLastData = () => {
       userTodayDataFunc();
     } else if (whichStation == "withinThreeDayStation") {
       const userThreeDayDataFunc = async () => {
-        const request = await customFetch.get(
-          `/last-data/treeDayWorkStations?page=1&perPage=${stationStatistic.totalThreeDayWorkStationsCount}`
-        );
-
         const resultExcelData = [];
-        request.data.data.forEach((e) => {
-          resultExcelData.push({
-            nomi: e.station.name,
-            imei: e.station.imel,
-            battery: e.station.battery,
-            lokatsiya: e.station.location,
-            programma_versiyasi: e.station.programVersion,
-            qurilma_telefon_raqami: e.station.devicePhoneNum,
-            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
-            integratsiya:
-              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
-            [sath]: Number(e.level).toFixed(2),
-            [hajm]: Number(e.volume).toFixed(2),
-            [tuzatish]: Number(e.correction),
-            sana: e.date,
+
+        if(firstStatistic){
+          const request = await customFetch.get(
+            `/last-data/treeDayWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalThreeDayWorkStationsCount}&organization=1`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
           });
-        });
+        }else if (balansOrgId != undefined && firstStatistic == false){
+          const request = await customFetch.get(
+            `/last-data/treeDayWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalThreeDayWorkStationsCount}&organization=${balansOrgId}`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
+          });
+        }
 
         const workBook = XLSX.utils.book_new();
         const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
+        const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+        nameExcelFile.join('')
 
-        if (request.data.data.length > 0) {
+        if (resultExcelData.length > 0) {
           XLSX.writeFile(
             workBook,
-            `${
-              role == "USER" ? name
-              : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}`
-              : balanceOrgName
-            } ning 3 ichida kelgan ma'lumotlari ${resultDate}.xlsx`
+            `${nameExcelFile} 3 ichida kelgan ma'lumotlari ${resultDate}.xlsx`
           );
         }
       };
@@ -596,42 +652,65 @@ const AdminLastData = () => {
       userThreeDayDataFunc();
     } else if (whichStation == "totalMonthWorkStation") {
       const userLastMonthDataFunc = async () => {
-        const request = await customFetch.get(
-          `/last-data/lastMonthWorkStations?page=1&perPage=${stationStatistic.totalMonthWorkStationsCount}`
-        );
-
         const resultExcelData = [];
-        request.data.data.forEach((e) => {
-          resultExcelData.push({
-            nomi: e.station.name,
-            imei: e.station.imel,
-            battery: e.station.battery,
-            lokatsiya: e.station.location,
-            programma_versiyasi: e.station.programVersion,
-            qurilma_telefon_raqami: e.station.devicePhoneNum,
-            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
-            integratsiya:
-              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
-            [sath]: Number(e.level).toFixed(2),
-            [hajm]: Number(e.volume).toFixed(2),
-            [tuzatish]: Number(e.correction),
-            sana: e.date,
+
+        if(firstStatistic){
+          const request = await customFetch.get(
+            `/last-data/lastMonthWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalMonthWorkStationsCount}&organization=1`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
           });
-        });
+        }else if (balansOrgId != undefined && firstStatistic == false){
+          const request = await customFetch.get(
+            `/last-data/lastMonthWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalMonthWorkStationsCount}&organization=${balansOrgId}`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
+          });
+        }
 
         const workBook = XLSX.utils.book_new();
         const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
+        const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+        nameExcelFile.join('')
 
-        if (request.data.data.length > 0) {
+        if (resultExcelData.length > 0) {
           XLSX.writeFile(
             workBook,
-            `${
-              role == "USER" ? name
-              : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}`
-              : balanceOrgName
-            } ning so'ngi oy kelgan ma'lumotlari ${resultDate}.xlsx`
+            `${nameExcelFile} so'ngi oy kelgan ma'lumotlari ${resultDate}.xlsx`
           );
         }
       };
@@ -639,42 +718,65 @@ const AdminLastData = () => {
       userLastMonthDataFunc();
     } else if (whichStation == "totalMoreWorkStations") {
       const userMoreMonthDataFunc = async () => {
-        const request = await customFetch.get(
-          `/last-data/moreWorkStations?page=1&perPage=${stationStatistic.totalMoreWorkStationsCount}`
-        );
-
         const resultExcelData = [];
-        request.data.data.forEach((e) => {
-          resultExcelData.push({
-            nomi: e.station.name,
-            imei: e.station.imel,
-            battery: e.station.battery,
-            lokatsiya: e.station.location,
-            programma_versiyasi: e.station.programVersion,
-            qurilma_telefon_raqami: e.station.devicePhoneNum,
-            status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
-            integratsiya:
-              e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
-            [sath]: Number(e.level).toFixed(2),
-            [hajm]: Number(e.volume).toFixed(2),
-            [tuzatish]: Number(e.correction),
-            sana: e.date,
+
+        if(firstStatistic){
+          const request = await customFetch.get(
+            `/last-data/moreWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalMoreWorkStationsCount}&organization=1`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
           });
-        });
+        }else if(balansOrgId != undefined && firstStatistic == false){
+          const request = await customFetch.get(
+            `/last-data/moreWorkStationsByOrganization?page=1&perPage=${stationStatistic.totalMoreWorkStationsCount}&organization=${balansOrgId}`
+          );
+
+          request.data.data.forEach((e) => {
+            resultExcelData.push({
+              nomi: e.station.name,
+              imei: e.station.imel,
+              battery: e.station.battery,
+              lokatsiya: e.station.location,
+              programma_versiyasi: e.station.programVersion,
+              qurilma_telefon_raqami: e.station.devicePhoneNum,
+              status: e.station.status == 1 ? "ishlayapti" : "ishlamayapti",
+              integratsiya:
+                e?.station.isIntegration == true ? "Qilingan" : "Qilinmagan",
+              [sath]: Number(e.level).toFixed(2),
+              [hajm]: Number(e.volume).toFixed(2),
+              [tuzatish]: Number(e.correction),
+              sana: e.date,
+            });
+          });
+        }
 
         const workBook = XLSX.utils.book_new();
         const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
         XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
+        const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+        nameExcelFile.join('')
 
-        if (request.data.data.length > 0) {
+        if (resultExcelData.length > 0) {
           XLSX.writeFile(
             workBook,
-            `${
-              role == "USER" ? name
-              : role == 'Region' ? `${regionName} ${foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) : ''}`
-              : balanceOrgName
-            } ning uzoq ishlamagan stansiya ma'lumotlari ${resultDate}.xlsx`
+            `${nameExcelFile} uzoq ishlamagan stansiya ma'lumotlari ${resultDate}.xlsx`
           );
         }
       };
@@ -841,15 +943,16 @@ const AdminLastData = () => {
       .get(`/last-data/getStatisticStationsByOrganization?organization=${id}`)
       .then((data) => settationStatistic(data.data.data));
     }
-
   }
 
   const items = stationsCountByRegion?.gruopOrganization.map((e, i) => {
     return  <div className="sort-dashboard-list-item ms-3" onClick={(s) => {
+      setSelectBalansOrg(true)
       setBalansOrgId(e.balance_organization_id)
       getStationStatisByBalansOrg(e.balance_organization_id)
       setWhichStation('allStation')
       setTableTitle("Umumiy stansiyalar soni");
+      setTitleBalansOrgData(`${foundBalansOrgName(e.balance_organization_id)} ga tegishli ma'lumotlar`)
       loaderFunc()
     }}>
        <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">
@@ -898,11 +1001,6 @@ const AdminLastData = () => {
         .get(`/last-data/getStatisticStationsByOrganization?organization=1`)
         .then((data) => settationStatistic(data.data.data))
 
-        // ! STATISTIC BY BATTERY
-        customFetch
-        .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=1`)
-        .then((data) => setStationBattery(data.data.data));
-
         setTitleBalansOrgData(`${foundBalansOrgName(1)} ga tegishli ma'lumotlar`)
         setBalansOrgId(undefined)
     }else {
@@ -913,33 +1011,25 @@ const AdminLastData = () => {
             setStationsCountByRegion(requestStationByRegionId.data)
 
             const balansOrgId = requestStationByRegionId.data.gruopOrganization[0]?.balance_organization_id
+
             // ! STATION STATISTIC BY BALANS ORG
             const requestStationStatistic = await customFetch.get(
                 `/last-data/getStatisticStationsByOrganization?organization=${balansOrgId}`
             );
+
             settationStatistic(requestStationStatistic.data.data);
             setTitleBalansOrgData(`${foundBalansOrgName(balansOrgId)} ga tegishli ma'lumotlar`)
-
-            // ! STATISTIC BY BATTERY
-            customFetch
-            .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=${balansOrgId}`)
-            .then((data) => setStationBattery(data.data.data));
-
-            // ! VIEW STATION
-            customFetch
-              .get(
-                `/last-data/getLastDataByOrganization?page=1&perPage=${requestStationStatistic.data.data.totalStationsCount}&organization=${balansOrgId}`
-              )
-              .then((data) => {
-                setViewStation(data.data.data);
-              });
-
-            // ! LIMIT
-            customFetch
-              .get(`/last-data/getLastDataByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
-              .then((data) => setViewStationLimit(data.data.data)
-              );
             setBalansOrgId(balansOrgId)
+
+            // ! ALL STATION
+            customFetch
+            .get(`/last-data/getLastDataByOrganization?page=1&perPage=12&organization=${balansOrgId}`)
+            .then((data) => {
+              setAllStation(data.data.data)
+              setTotalPages(
+                data.data.totalPages
+              )
+            });
         }
         getStationByRegionId()
     }
@@ -1002,7 +1092,6 @@ const AdminLastData = () => {
                                 setFirstStatistic(true)
                                 setSelectBalansOrg(true)
                                 setWhichStation("allStation");
-                                setDataOrStation("data");
                                 setTableTitle("Umumiy stansiyalar soni");
                             }}>
                                 <div className="d-flex align-items-center m-0">
@@ -1029,7 +1118,6 @@ const AdminLastData = () => {
                                         setFirstStatistic(false)
                                         setSelectBalansOrg(false)
                                         setWhichStation("allStation")
-                                        setDataOrStation("data");
                                         setTableTitle("Umumiy stansiyalar soni");
                                     }}>
                                         <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">
@@ -1081,7 +1169,7 @@ const AdminLastData = () => {
                       <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
                         <AliceCarousel
                           autoPlay={true}
-                          infinite={true}
+                          // infinite={true}
                           autoPlayStrategy="all"
                           responsive={responsive}
                           disableButtonsControls={true}
@@ -1093,14 +1181,9 @@ const AdminLastData = () => {
                           />
                       </ol>
 
-                    {
-                      role == "Region"
-                      ?
                       <h3>
-                    {regionName} {foundBalansOrgName(balansOrgId) != undefined ? foundBalansOrgName(balansOrgId) + ' balans tashkiloti': null}  statistikasi
-                    </h3>
-                    : null
-                    }
+                      {titleBalansOrgData}
+                      </h3>
                     <ul className="dashboard-list dashboard-list-last-data list-unstyled m-0 d-flex flex-wrap align-items-center">
                       {stationStatistic?.totalStationsCount > 0 ? (
                         <li
@@ -1109,6 +1192,7 @@ const AdminLastData = () => {
                             setWhichStation("allStation");
                             setTableTitle("Umumiy stansiyalar soni");
                             setColorCard("user-last-data-list-item-href-blue");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1139,6 +1223,7 @@ const AdminLastData = () => {
                             setWhichStation("todayStation");
                             setTableTitle("Bugun ishlayotganlar stansiyalar");
                             setColorCard("user-last-data-list-item-href-green");
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1176,6 +1261,7 @@ const AdminLastData = () => {
                             setColorCard(
                               "user-last-data-list-item-href-lime-green"
                             );
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1214,6 +1300,7 @@ const AdminLastData = () => {
                             setColorCard(
                               "user-last-data-list-item-href-yellow"
                             );
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1252,6 +1339,7 @@ const AdminLastData = () => {
                             setColorCard(
                               "user-last-data-list-item-href-orange"
                             );
+                            setSelectBalansOrg(true)
                             loaderFunc();
                           }}
                         >
@@ -1284,7 +1372,7 @@ const AdminLastData = () => {
                   </div>
 
                   <div className="mt-5 d-flex align-items-center justify-content-between">
-                    <h3 className="m-0">{tableTitle} ning ma'lumotlari</h3>
+                    <h3 className="m-0">{tableTitle}</h3>
 
                     <div className="d-flex align-items-center user-last-data-sort-wrapper justify-content-end">
                       <input

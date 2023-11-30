@@ -960,7 +960,7 @@ const UserLastData = (prop) => {
                   <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
                     <AliceCarousel
                       autoPlay={true}
-                      infinite={true}
+                      // infinite={true}
                       autoPlayStrategy="all"
                       responsive={responsive}
                       disableButtonsControls={true}
