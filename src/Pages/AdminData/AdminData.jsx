@@ -798,7 +798,7 @@ const AdminData = () => {
     let startDate = new Date(value.length > 0 ? value[0]?.date : null);
     startDate.setHours(startDate.getHours() - 5);
 
-    if (value.length > 0 ? value[0]?.date == undefined : false) {
+    if (value.length == 0) {
       return 404;
     } else if (
       startDate.getFullYear() == presentDate.getFullYear() &&
