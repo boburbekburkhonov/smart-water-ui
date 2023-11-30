@@ -18,7 +18,8 @@ import defective from "../../assets/images/defective.png";
 import warning from "../../assets/images/warning.png";
 import warningMessage from "../../assets/images/warning-message.png";
 
-const UserStations = () => {
+const UserStations = (prop) => {
+  const { balanceOrg } = prop;
   const [count, setCount] = useState(0);
   const [allStation, setAllStation] = useState([]);
   const [allStationForBattery, setAllStationForBattery] = useState([]);
@@ -44,9 +45,15 @@ const UserStations = () => {
   const [tableTitleForBattery, setTableTitleForBattery] = useState();
   const [tableTitleForStatus, setTableTitleForStatus] = useState();
   const [regionName, setRegionName] = useState();
-  const balanceOrgName = localStorage.getItem("balanceOrgName");
   const name = window.localStorage.getItem("name");
   const role = window.localStorage.getItem("role");
+
+  balanceOrg.find((e) => {
+    if (e.id == name) {
+      window.localStorage.setItem("balanceOrgName", e.name);
+    }
+  });
+  const balanceOrgName = localStorage.getItem("balanceOrgName");
 
   // ! CUSTOM FETCH
   const customFetch = axios.create({
@@ -1031,28 +1038,40 @@ const UserStations = () => {
                       className="tab-pane fade show active profile-users table-scroll"
                       id="profile-users"
                     >
-                      <div className="w-100 d-flex align-items-center justify-content-between flex-wrap mb-4">
-                        <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
-                        {regionName}ga tegishli balans tashkilotlar
-                        </h1>
-                      <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
-                        setBalansOrgId(undefined)
-                        getStationStatisByBalansOrgForList()
-                        setTableTitle(`${regionName}ga tegishli stansiyalar`)
-                      }}>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
+                      <div className="w-100 d-flex align-items-center justify-content-between flex-wrap">
+                        {
+                          role == 'Region'
+                          ?
+                          <div className="d-flex align-items-center justify-content-between w-100 mb-4">
+                            <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
+                              {regionName}ga tegishli balans tashkilotlar
+                            </h1>
+                            <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
+                              setBalansOrgId(undefined)
+                              getStationStatisByBalansOrgForList()
+                              setTableTitle(`${regionName}ga tegishli stansiyalar`)
+                            }}>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsRegion} ta</span>
-                          </div>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
-                          </div>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
-                          </div>
-                        </div>
+                          :
+                          <h1 className="dashboard-heading ms-2">
+                            {balanceOrg.length > 0
+                            ? `${balanceOrgName} ga biriktirilgan qurilmalar`
+                            : `${name} ga biriktirilgan qurilmalar`}
+                          </h1>
+                        }
                     </div>
 
                       <AliceCarousel
@@ -1109,7 +1128,13 @@ const UserStations = () => {
                         </button>
                       </div>
 
-                      <h3>{tableTitle == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitle}</h3>
+                      {
+                        role == 'Region'
+                        ?
+                        <h3>{tableTitle == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitle}</h3>
+                        :
+                        null
+                      }
 
                       {allStation?.length == 0 ? (
                         <h3 className="alert alert-dark text-center mt-5">
@@ -1211,30 +1236,40 @@ const UserStations = () => {
                       className="tab-pane fade profile-overview table-scroll"
                       id="profile-overview"
                     >
-                      <div className="w-100 d-flex align-items-center justify-content-between flex-wrap mb-4">
-                      <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
-                      {regionName}ga tegishli balans tashkilotlar
-                      </h1>
-                      <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
-                        setBalansOrgIdForBattery(undefined)
-                        getStationStatisByBalansOrgForBattery()
-                        setTableTitleForBattery(`${regionName}ga tegishli stansiyalar`)
-                        setMinimumValue('')
-                        setMaximumValue('')
-                      }}>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
-                        </div>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsRegion} ta</span>
-                        </div>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
-                        </div>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
-                        </div>
-                      </div>
+                      <div className="w-100 d-flex align-items-center justify-content-between flex-wrap">
+                      {
+                          role == 'Region'
+                          ?
+                          <div className="d-flex align-items-center justify-content-between w-100 mb-4">
+                            <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
+                              {regionName}ga tegishli balans tashkilotlar
+                            </h1>
+                            <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
+                              setBalansOrgIdForBattery(undefined)
+                              getStationStatisByBalansOrgForBattery()
+                              setTableTitleForBattery(`${regionName}ga tegishli stansiyalar`)
+                            }}>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
+                              </div>
+                            </div>
+                          </div>
+                          :
+                          <h1 className="dashboard-heading ms-2">
+                            {balanceOrg.length > 0
+                            ? `${balanceOrgName} ga biriktirilgan qurilmalar`
+                            : `${name} ga biriktirilgan qurilmalar`}
+                          </h1>
+                        }
                     </div>
 
                       <AliceCarousel
@@ -1309,8 +1344,13 @@ const UserStations = () => {
                         </button>
                       </div>
 
-                      <h3>{tableTitleForBattery == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitleForBattery}</h3>
-
+                      {
+                        role == 'Region'
+                        ?
+                        <h3>{tableTitleForBattery == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitleForBattery}</h3>
+                        :
+                        null
+                      }
 
                       {allStationForBattery?.length == 0 ? (
                         <h3 className="alert alert-dark text-center mt-5">
@@ -1411,28 +1451,34 @@ const UserStations = () => {
                       className="tab-pane fade profile-search table-scroll"
                       id="profile-search"
                     >
-                      <div className="station-status-wrapper w-100 d-flex align-items-center justify-content-between flex-wrap mb-4">
-                        <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
-                        {regionName}ga tegishli balans tashkilotlar
-                        </h1>
-                      <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
-                        setBalansOrgIdForStatus(undefined)
-                        getStationStatisByBalansOrgForStatus()
-                        setTableTitleForStatus(`${regionName}ga tegishli ishlamayotganlar stansiyalar ro'yhati`)
-                      }}>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
+                      <div className="station-status-wrapper w-100 d-flex align-items-center justify-content-between flex-wrap">
+                      {
+                          role == 'Region'
+                          ?
+                          <div className="d-flex align-items-center justify-content-between w-100 mb-4">
+                            <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
+                              {regionName}ga tegishli balans tashkilotlar
+                            </h1>
+                            <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
+                              setBalansOrgIdForStatus(undefined)
+                              getStationStatisByBalansOrgForStatus()
+                              setTableTitleForStatus(`${regionName}ga tegishli stansiyalar`)
+                            }}>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsRegion} ta</span>
-                          </div>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
-                          </div>
-                          <div className="d-flex align-items-center m-0">
-                            <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
-                          </div>
-                        </div>
+                          :
+                          <h1 className="dashboard-heading ms-2">
+                            {balanceOrg.length > 0
+                            ? `${balanceOrgName} ga biriktirilgan qurilmalar`
+                            : `${name} ga biriktirilgan qurilmalar`}
+                          </h1>
+                        }
                     </div>
 
                       <AliceCarousel
@@ -1448,7 +1494,13 @@ const UserStations = () => {
                         items={itemsStationByStatus}
                       />
 
-                    <h3 className="mt-4">{tableTitleForStatus == undefined ? `${regionName} ga tegishli ishlamayotganlar stansiyalar ro'yhati` : tableTitleForStatus}</h3>
+                    {
+                      role == 'Region'
+                      ?
+                      <h3>{tableTitleForStatus == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitleForStatus}</h3>
+                      :
+                      null
+                    }
 
                       <div
                         className="text-end d-flex align-items-center justify-content-end cursor-pointer ms-auto user-station-save"
@@ -1463,7 +1515,7 @@ const UserStations = () => {
                       </div>
                       {notWorkingStation?.length == 0 ? (
                         <h3 className="alert alert-dark text-center mt-5">
-                          {tableTitleForStatus.split('ga')[0]} da ishlamayotgan stansiya yo'q...
+                          {tableTitleForStatus?.split('ga')[0]} da ishlamayotgan stansiya yo'q...
                         </h3>
                       ) : (
                         <table className="c-table mt-4  w-10 0 table table-striped table-hover">

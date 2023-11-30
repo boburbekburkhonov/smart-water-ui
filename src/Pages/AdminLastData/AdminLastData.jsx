@@ -33,17 +33,22 @@ const AdminLastData = () => {
   const navigate = useNavigate();
   const name = window.localStorage.getItem("name");
   const role = window.localStorage.getItem("role");
+  const [stationsCountByAdmin, setStationsCountByAdmin] = useState();
+  const [stationsCountByRegion, setStationsCountByRegion] = useState();
   const [stationStatistic, settationStatistic] = useState([]);
   const [whichStation, setWhichStation] = useState("allStation");
   const [tableTitle, setTableTitle] = useState("Umumiy stansiyalar soni");
   const [colorCard, setColorCard] = useState(
     "user-last-data-list-item-href-blue"
   );
-  const [stationsCountByRegion, setStationsCountByRegion] = useState();
   const [allBalansOrg, setAllBalansOrg] = useState([]);
+  const [allRegion, setAllRegion] = useState([]);
   const balanceOrgName = localStorage.getItem("balanceOrgName");
   const [balansOrgId, setBalansOrgId] = useState();
   const [regionName, setRegionName] = useState();
+  const [selectBalansOrg, setSelectBalansOrg] = useState(true);
+  const [titleBalansOrg, setTitleBalansOrg] = useState("Jami Qoraqalpog‘iston Respublikasi balans tashkilotlari");
+  const [titleBalansOrgData, setTitleBalansOrgData] = useState("Amudaryo TIB ga tegishli ma'lumotlar");
 
 
   // ! CUSTOM FETCH
@@ -117,26 +122,36 @@ const AdminLastData = () => {
   );
 
   useEffect(() => {
+    // ! ALL REGION
+    customFetch
+    .get(`/regions/all`)
+    .then((data) => setAllRegion(data.data.regions))
+
+    // ! ALL BALANS ORG
+    customFetch
+    .get(`/balance-organizations/all-find`)
+    .then((data) => setAllBalansOrg(data.data.balanceOrganizations))
+
+    // ! STATION COUNT BY ADMIN
+    customFetch
+    .get(`/stations/getStationsCountByAdmin`)
+    .then((data) => setStationsCountByAdmin(data.data))
+
+     // ! STATION COUNT BY REGION
+     customFetch
+     .get(`/stations/getStationsCountByRegion?regionNumber=1`)
+     .then((data) => setStationsCountByRegion(data.data))
+
     const userDashboardFunc = async () => {
       // ! STATION STATISTIC
       const requestStationStatistic = await customFetch.get(
-        `/last-data/getStatisticStations`
+        `/last-data/getStatisticStationsByOrganization?organization=1`
       );
 
       settationStatistic(requestStationStatistic.data.data);
     };
 
     userDashboardFunc();
-
-    // ! STATION BY REGION
-    customFetch
-      .get(`/stations/getStationsCountByRegion?regionNumber=${name}`)
-      .then((data) => setStationsCountByRegion(data.data))
-
-    // ! ALL BALANS ORG
-    customFetch
-    .get(`/balance-organizations/all-find`)
-    .then((data) => setAllBalansOrg(data.data.balanceOrganizations))
   }, []);
 
   useEffect(() => {
@@ -393,10 +408,10 @@ const AdminLastData = () => {
 
   const checkStationWorkingOrNot = (value) => {
     const presentDate = new Date();
-    let startDate = new Date(value?.date);
+    let startDate = new Date(value?.length > 0 && Array.isArray(value) ? value[0]?.date : value?.date);
     startDate.setHours(startDate.getHours() - 5);
 
-    if (value?.level == undefined) {
+    if (value?.length > 0  && Array.isArray(value) ? value[0]?.date == undefined : value?.date == undefined) {
       return 404;
     } else if (
       startDate.getFullYear() == presentDate.getFullYear() &&
@@ -677,6 +692,7 @@ const AdminLastData = () => {
           )
           .then((data) => {
             if (data.data.data.data.length > 0) {
+              console.log(data.data.data);
               setAllStation(data.data.data.data);
               setTotalPages(data.data.data.totalPages);
             }
@@ -800,6 +816,12 @@ const AdminLastData = () => {
     return foundBalansOrg?.name
   }
 
+  const foundRegionName = id => {
+    const foundRegion = allRegion.find(i => i.id == id)
+
+    return foundRegion?.name
+  }
+
   const responsive = {
     0: { items: 1 },
     820: { items: 2 },
@@ -864,6 +886,65 @@ const AdminLastData = () => {
     }
   }
 
+  const getStationCountByRegionId = regionId => {
+    if(regionId == undefined){
+        // ! STATION COUNT BY REGION
+        customFetch
+        .get(`/stations/getStationsCountByRegion?regionNumber=1`)
+        .then((data) => setStationsCountByRegion(data.data))
+
+        // ! STATION STATISTIC BY BALANS ORG
+        customFetch
+        .get(`/last-data/getStatisticStationsByOrganization?organization=1`)
+        .then((data) => settationStatistic(data.data.data))
+
+        // ! STATISTIC BY BATTERY
+        customFetch
+        .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=1`)
+        .then((data) => setStationBattery(data.data.data));
+
+        setTitleBalansOrgData(`${foundBalansOrgName(1)} ga tegishli ma'lumotlar`)
+        setBalansOrgId(undefined)
+    }else {
+        // ! STATION COUNT BY REGION
+        const getStationByRegionId = async () => {
+           const requestStationByRegionId = await customFetch
+            .get(`/stations/getStationsCountByRegion?regionNumber=${regionId}`)
+            setStationsCountByRegion(requestStationByRegionId.data)
+
+            const balansOrgId = requestStationByRegionId.data.gruopOrganization[0]?.balance_organization_id
+            // ! STATION STATISTIC BY BALANS ORG
+            const requestStationStatistic = await customFetch.get(
+                `/last-data/getStatisticStationsByOrganization?organization=${balansOrgId}`
+            );
+            settationStatistic(requestStationStatistic.data.data);
+            setTitleBalansOrgData(`${foundBalansOrgName(balansOrgId)} ga tegishli ma'lumotlar`)
+
+            // ! STATISTIC BY BATTERY
+            customFetch
+            .get(`/stations/getStatisticStationsByBatteryAndOrganization?organization=${balansOrgId}`)
+            .then((data) => setStationBattery(data.data.data));
+
+            // ! VIEW STATION
+            customFetch
+              .get(
+                `/last-data/getLastDataByOrganization?page=1&perPage=${requestStationStatistic.data.data.totalStationsCount}&organization=${balansOrgId}`
+              )
+              .then((data) => {
+                setViewStation(data.data.data);
+              });
+
+            // ! LIMIT
+            customFetch
+              .get(`/last-data/getLastDataByOrganization?page=1&perPage=8&organization=${balansOrgId}`)
+              .then((data) => setViewStationLimit(data.data.data)
+              );
+            setBalansOrgId(balansOrgId)
+        }
+        getStationByRegionId()
+    }
+  }
+
     return (
     <section className="home-section py-3">
       {/* MODAL DEFECT */}
@@ -911,62 +992,107 @@ const AdminLastData = () => {
                   id="profile-users"
                 >
                   <div className="user-last-data-top-wrapper pt-3">
-                    {
-                      role == 'Region'
-                      ?
-                      <div className="w-100 d-flex align-items-center justify-content-between mb-4">
-                      <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
-                      {regionName}ga tegishli balans tashkilotlar
-                      </h1>
-                      <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
-                        setBalansOrgId(undefined)
-                        getStationStatisByBalansOrg()
-                        setWhichStation("allStation");
-                        setTableTitle("Umumiy stansiyalar soni");
-                        loaderFunc()
-                      }}>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={allIcon} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countStationsByRegion} ta</span>
+                  <div className="w-100 d-flex align-items-center justify-content-between flex-wrap">
+                            <h2 className="dashboard-heading ms-2 dashboard-heading-role">
+                                Jami viloyatlari
+                            </h2>
+                            <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
+                                getStationCountByRegionId(undefined)
+                                setTitleBalansOrg(`Jami ${foundRegionName(1)} balans tashkilotlari`)
+                                setFirstStatistic(true)
+                                setSelectBalansOrg(true)
+                                setWhichStation("allStation");
+                                setDataOrStation("data");
+                                setTableTitle("Umumiy stansiyalar soni");
+                            }}>
+                                <div className="d-flex align-items-center m-0">
+                                    <img src={allIcon} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByAdmin?.countStations} ta</span>
+                                </div>
+                                <div className="d-flex align-items-center m-0">
+                                    <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByAdmin?.countWorkingStations} ta</span>
+                                </div>
+                                <div className="d-flex align-items-center m-0">
+                                    <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByAdmin?.countNotWorkingStations} ta</span>
+                                </div>
+                                <div className="d-flex align-items-center m-0">
+                                    <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByAdmin?.countWorkingStationsDefective} ta</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsRegion} ta</span>
-                        </div>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countNotWorkingStationsRegion} ta</span>
-                        </div>
-                        <div className="d-flex align-items-center m-0">
-                          <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion.countWorkingStationsDefectiveRegion} ta</span>
-                        </div>
-                      </div>
-                    </div>
-                    :
-                    <h1 className="mb-3 user-lastdata-heading">
-                      {/* {balanceOrg.length == 0
-                        ? `${name} ga biriktirilgan qurilmalar`
-                        : `${balanceOrgName} ga biriktirilgan qurilmalar`} */}
-                    </h1>
-                    }
 
-                    {
-                  role == 'Region'
-                  ?
-                  <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
-                    <AliceCarousel
-                      autoPlay={true}
-                      infinite={true}
-                      autoPlayStrategy="all"
-                      responsive={responsive}
-                      disableButtonsControls={true}
-                      animationDuration="900"
-                      autoPlayInterval={10000}
-                      paddingLeft={40}
-                      mouseTracking
-                      items={items}
-                      />
-                  </ol>
-                :
-                null
-                }
+                        <div className="d-flex align-items-center justify-content-between flex-wrap mb-5">
+                            {
+                                stationsCountByAdmin?.gruopRegion?.map((e, i) => {
+                                    return  <div className="sort-dashboard-list-item sort-dashboard-list-item-admin ms-3 mt-4" key={i} onClick={() => {
+                                        getStationCountByRegionId(e.region_id)
+                                        setTitleBalansOrg(`Jami ${foundRegionName(e.region_id)} balans tashkilotlari`)
+                                        setFirstStatistic(false)
+                                        setSelectBalansOrg(false)
+                                        setWhichStation("allStation")
+                                        setDataOrStation("data");
+                                        setTableTitle("Umumiy stansiyalar soni");
+                                    }}>
+                                        <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">
+                                        <h6>
+                                        {
+                                            foundRegionName(e.region_id)
+                                        }
+                                        </h6>
+                                        <div className="d-flex flex-wrap">
+                                            <div className="d-flex align-items-center m-0">
+                                                <img src={allIcon} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{e.countStations} ta</span>
+                                            </div>
+                                            <div className="d-flex align-items-center m-0 ms-2">
+                                                <img src={active} alt="active" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{e.countWorkStations} ta</span>
+                                            </div>
+                                            <div className="d-flex align-items-center m-0">
+                                                <img src={passive} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{e.countNotWorkStations} ta</span>
+                                            </div>
+                                            <div className="d-flex align-items-center m-0 ms-2">
+                                                <img src={defective} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{e.countWorkingStationsDefectiveRegion} ta</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                })
+                            }
+                        </div>
+
+                        <div className="d-flex justify-content-between align-items-center mb-4">
+                          <h2 className="dashboard-heading ms-2 dashboard-heading-role">
+                            {titleBalansOrg}
+                          </h2>
+                          <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor">
+                            <div className="d-flex align-items-center m-0">
+                              <img src={allIcon} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
+                            </div>
+                            <div className="d-flex align-items-center m-0">
+                              <img src={active} alt="active" className="ms-3" width={30} height={30} /> <span className="fs-6 ms-1">Active</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsRegion} ta</span>
+                            </div>
+                            <div className="d-flex align-items-center m-0">
+                              <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
+                            </div>
+                            <div className="d-flex align-items-center m-0">
+                              <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
+                            </div>
+                          </div>
+                        </div>
+
+                      <ol className="list-unstyled sort-dashboard-list m-0 mb-4 d-flex align-items-center justify-content-center">
+                        <AliceCarousel
+                          autoPlay={true}
+                          infinite={true}
+                          autoPlayStrategy="all"
+                          responsive={responsive}
+                          disableButtonsControls={true}
+                          animationDuration="900"
+                          autoPlayInterval={10000}
+                          paddingLeft={40}
+                          mouseTracking
+                          items={items}
+                          />
+                      </ol>
+
                     {
                       role == "Region"
                       ?
@@ -1324,9 +1450,11 @@ const AdminLastData = () => {
                                       Sath:
                                     </p>
                                     <span className="fw-bold text-end w-100 user-lastdata-level-desc">
-                                      {whichStation == "allStation" &&
+                                      {whichStation == "allStation" && Array.isArray(e.lastData) && e.lastData?.length > 0 &&
                                       e.lastData[0]?.level != undefined
                                         ? `${Number(e.lastData[0]?.level).toFixed()} sm`
+                                        : Array.isArray(e.lastData) == false && e.lastData?.level != undefined && whichStation == "allStation"
+                                        ? `${Number(e.lastData?.level).toFixed()} sm`
                                         : e?.level != undefined
                                         ? `${Number(e?.level).toFixed()} sm`
                                         : "-"}
@@ -1338,9 +1466,11 @@ const AdminLastData = () => {
                                       Hajm:
                                     </p>
                                     <span className="fw-bold text-end w-100 user-lastdata-level-desc">
-                                      {whichStation == "allStation" &&
+                                      {whichStation == "allStation" && Array.isArray(e.lastData) && e.lastData?.length > 0 &&
                                       e.lastData[0]?.volume != undefined
                                         ? `${Number(e.lastData[0]?.volume).toFixed()} m³/s`
+                                        : Array.isArray(e.lastData) == false && e.lastData?.volume != undefined && whichStation == "allStation"
+                                        ? `${Number(e.lastData?.volume).toFixed()} m³/s`
                                         : e?.volume != undefined
                                         ? `${Number(e?.volume).toFixed()} m³/s`
                                         : "-"}
@@ -1351,11 +1481,15 @@ const AdminLastData = () => {
                                       Tuzatish:{" "}
                                     </p>
                                     <span className="fw-bold text-end w-100 user-lastdata-level-desc">
-                                      {whichStation == "allStation" &&
+                                      {whichStation == "allStation" && Array.isArray(e.lastData) && e.lastData?.length > 0 &&
                                       e.lastData[0]?.correction != undefined
                                         ? Number(
                                             e.lastData[0]?.correction
                                           ).toFixed()
+                                        : Array.isArray(e.lastData) == false && e.lastData?.correction != undefined && whichStation == "allStation"
+                                        ? Number(
+                                          e.lastData?.correction
+                                        ).toFixed()
                                         : e?.correction != undefined
                                         ? Number(e?.correction).toFixed()
                                         : "-"}
@@ -1366,8 +1500,10 @@ const AdminLastData = () => {
                                 <div className="mt-2">
                                   <p className="m-0">
                                     {returnFixdDate(
-                                      whichStation == "allStation"
+                                      whichStation == "allStation" && Array.isArray(e.lastData) && e.lastData?.length > 0
                                         ? e?.lastData[0]?.date
+                                        : whichStation == "allStation" && Array.isArray(e.lastData) == false
+                                        ? e?.lastData?.date
                                         : e.date
                                     )}
                                   </p>
