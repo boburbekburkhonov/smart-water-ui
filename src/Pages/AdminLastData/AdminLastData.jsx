@@ -155,6 +155,9 @@ const AdminLastData = () => {
   }, []);
 
   useEffect(() => {
+    console.log(selectBalansOrg);
+    console.log(firstStatistic);
+    console.log(balansOrgId);
     if(selectBalansOrg){
       if(firstStatistic){
         if (whichStation == "allStation") {
@@ -786,15 +789,74 @@ const AdminLastData = () => {
   };
 
   const searchStationByInput = (value) => {
-    if(balansOrgId == undefined){
+    // if(balansOrgId == undefined){
+    //   if (whichStation == "allStation") {
+    //     customFetch
+    //       .get(
+    //         `/last-data/searchLastDataByStation?search=${value}&page=1&perPage=12`
+    //       )
+    //       .then((data) => {
+    //         if (data.data.data.data.length > 0) {
+    //           setAllStation(data.data.data.data);
+    //           setTotalPages(data.data.data.totalPages);
+    //         }
+    //       });
+    //   } else if (whichStation == "todayStation") {
+    //     customFetch
+    //       .get(
+    //         `/last-data/searchTodayWorkingStations?search=${value}&page=1&perPage=12`
+    //       )
+    //       .then((data) => {
+    //         if (data.data.data.docs.length > 0) {
+    //           setAllStation(data.data.data.docs);
+    //           setTotalPages(data.data.data.totalPages);
+    //         }
+    //       });
+    //   } else if (whichStation == "withinThreeDayStation") {
+    //     customFetch
+    //       .get(
+    //         `/last-data/searchThreeDaysWorkingStations?search=${value}&page=1&perPage=12`
+    //       )
+    //       .then((data) => {
+    //         if (data.data.data.docs.length > 0) {
+    //           setAllStation(data.data.data.docs);
+    //           setTotalPages(data.data.data.totalPages);
+    //         }
+    //       });
+    //   } else if (whichStation == "totalMonthWorkStation") {
+    //     customFetch
+    //       .get(
+    //         `/last-data/searchLastMonthWorkingStations?search=${value}&page=1&perPage=12`
+    //       )
+    //       .then((data) => {
+    //         if (data.data.data.docs.length > 0) {
+    //           setAllStation(data.data.data.docs);
+    //           setTotalPages(data.data.data.totalPages);
+    //         }
+    //       });
+    //   } else if (whichStation == "totalMoreWorkStations") {
+    //     customFetch
+    //       .get(
+    //         `/last-data/searchMoreWorkingStations?search=${value}&page=1&perPage=12`
+    //       )
+    //       .then((data) => {
+    //         if (data.data.data.docs.length > 0) {
+    //           setAllStation(data.data.data.docs);
+    //           setTotalPages(data.data.data.totalPages);
+    //         }
+    //       });
+    //   }
+    // }else {
+
+    // }
+    if(firstStatistic){
       if (whichStation == "allStation") {
         customFetch
           .get(
-            `/last-data/searchLastDataByStation?search=${value}&page=1&perPage=12`
+            `/last-data/searchLastDataByStationByOrganization?page=1&perPage=12&organization=1&search=${value}`
           )
           .then((data) => {
             if (data.data.data.data.length > 0) {
-              console.log(data.data.data);
               setAllStation(data.data.data.data);
               setTotalPages(data.data.data.totalPages);
             }
@@ -802,7 +864,7 @@ const AdminLastData = () => {
       } else if (whichStation == "todayStation") {
         customFetch
           .get(
-            `/last-data/searchTodayWorkingStations?search=${value}&page=1&perPage=12`
+            `/last-data/searchTodayWorkingStationsByOrganization?organization=1&page=1&perPage=12&search=${value}`
           )
           .then((data) => {
             if (data.data.data.docs.length > 0) {
@@ -813,7 +875,7 @@ const AdminLastData = () => {
       } else if (whichStation == "withinThreeDayStation") {
         customFetch
           .get(
-            `/last-data/searchThreeDaysWorkingStations?search=${value}&page=1&perPage=12`
+            `/last-data/searchThreeDaysWorkingStationsByOrganization?organization=1&page=1&perPage=12&search=${value}`
           )
           .then((data) => {
             if (data.data.data.docs.length > 0) {
@@ -824,7 +886,7 @@ const AdminLastData = () => {
       } else if (whichStation == "totalMonthWorkStation") {
         customFetch
           .get(
-            `/last-data/searchLastMonthWorkingStations?search=${value}&page=1&perPage=12`
+            `/last-data/searchLastMonthWorkingStationsByOrganization?organization=1&page=1&perPage=12&search=${value}`
           )
           .then((data) => {
             if (data.data.data.docs.length > 0) {
@@ -835,7 +897,7 @@ const AdminLastData = () => {
       } else if (whichStation == "totalMoreWorkStations") {
         customFetch
           .get(
-            `/last-data/searchMoreWorkingStations?search=${value}&page=1&perPage=12`
+            `/last-data/searchMoreWorkingStations?organization=1&page=1&perPage=12&search=${value}`
           )
           .then((data) => {
             if (data.data.data.docs.length > 0) {
@@ -844,7 +906,7 @@ const AdminLastData = () => {
             }
           });
       }
-    }else {
+    }else if(balansOrgId != undefined && firstStatistic == false){
       if (whichStation == "allStation") {
         customFetch
           .get(
@@ -948,6 +1010,7 @@ const AdminLastData = () => {
   const items = stationsCountByRegion?.gruopOrganization.map((e, i) => {
     return  <div className="sort-dashboard-list-item ms-3" onClick={(s) => {
       setSelectBalansOrg(true)
+      setFirstStatistic(false)
       setBalansOrgId(e.balance_organization_id)
       getStationStatisByBalansOrg(e.balance_organization_id)
       setWhichStation('allStation')
