@@ -26,7 +26,7 @@ import "./AdminLastData.css";
 import AliceCarousel from "react-alice-carousel";
 
 const AdminLastData = () => {
-    const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [allStation, setAllStation] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -155,9 +155,6 @@ const AdminLastData = () => {
   }, []);
 
   useEffect(() => {
-    console.log(selectBalansOrg);
-    console.log(firstStatistic);
-    console.log(balansOrgId);
     if(selectBalansOrg){
       if(firstStatistic){
         if (whichStation == "allStation") {
@@ -789,66 +786,6 @@ const AdminLastData = () => {
   };
 
   const searchStationByInput = (value) => {
-    // if(balansOrgId == undefined){
-    //   if (whichStation == "allStation") {
-    //     customFetch
-    //       .get(
-    //         `/last-data/searchLastDataByStation?search=${value}&page=1&perPage=12`
-    //       )
-    //       .then((data) => {
-    //         if (data.data.data.data.length > 0) {
-    //           setAllStation(data.data.data.data);
-    //           setTotalPages(data.data.data.totalPages);
-    //         }
-    //       });
-    //   } else if (whichStation == "todayStation") {
-    //     customFetch
-    //       .get(
-    //         `/last-data/searchTodayWorkingStations?search=${value}&page=1&perPage=12`
-    //       )
-    //       .then((data) => {
-    //         if (data.data.data.docs.length > 0) {
-    //           setAllStation(data.data.data.docs);
-    //           setTotalPages(data.data.data.totalPages);
-    //         }
-    //       });
-    //   } else if (whichStation == "withinThreeDayStation") {
-    //     customFetch
-    //       .get(
-    //         `/last-data/searchThreeDaysWorkingStations?search=${value}&page=1&perPage=12`
-    //       )
-    //       .then((data) => {
-    //         if (data.data.data.docs.length > 0) {
-    //           setAllStation(data.data.data.docs);
-    //           setTotalPages(data.data.data.totalPages);
-    //         }
-    //       });
-    //   } else if (whichStation == "totalMonthWorkStation") {
-    //     customFetch
-    //       .get(
-    //         `/last-data/searchLastMonthWorkingStations?search=${value}&page=1&perPage=12`
-    //       )
-    //       .then((data) => {
-    //         if (data.data.data.docs.length > 0) {
-    //           setAllStation(data.data.data.docs);
-    //           setTotalPages(data.data.data.totalPages);
-    //         }
-    //       });
-    //   } else if (whichStation == "totalMoreWorkStations") {
-    //     customFetch
-    //       .get(
-    //         `/last-data/searchMoreWorkingStations?search=${value}&page=1&perPage=12`
-    //       )
-    //       .then((data) => {
-    //         if (data.data.data.docs.length > 0) {
-    //           setAllStation(data.data.data.docs);
-    //           setTotalPages(data.data.data.totalPages);
-    //         }
-    //       });
-    //   }
-    // }else {
-
-    // }
     if(firstStatistic){
       if (whichStation == "allStation") {
         customFetch
@@ -1170,7 +1107,7 @@ const AdminLastData = () => {
                                     <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByAdmin?.countWorkingStationsDefective} ta</span>
                                 </div>
                             </div>
-                        </div>
+                      </div>
 
                         <div className="d-flex align-items-center justify-content-between flex-wrap mb-5">
                             {
