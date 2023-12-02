@@ -1014,10 +1014,10 @@ const UserStations = (prop) => {
                       <button
                         className="nav-link"
                         data-bs-toggle="tab"
-                        data-bs-target="#profile-overview"
-                        onClick={() => setWhichData("StationForBattery")}
+                        data-bs-target="#profile-search"
+                        onClick={() => setWhichData("StationForStatus")}
                       >
-                        Batareya bo'yicha qidirish
+                        Ishlamayotganlar stansiyalar
                       </button>
                     </li>
 
@@ -1025,10 +1025,10 @@ const UserStations = (prop) => {
                       <button
                         className="nav-link"
                         data-bs-toggle="tab"
-                        data-bs-target="#profile-search"
-                        onClick={() => setWhichData("StationForStatus")}
+                        data-bs-target="#profile-overview"
+                        onClick={() => setWhichData("StationForBattery")}
                       >
-                        Ishlamayotganlar stansiyalar
+                        Batareya bo'yicha qidirish
                       </button>
                     </li>
                   </ul>
@@ -1224,6 +1224,168 @@ const UserStations = (prop) => {
                       <ReactPaginate
                         pageCount={totalPages}
                         onPageChange={handlePageChange}
+                        forcePage={currentPage}
+                        previousLabel={"<<"}
+                        nextLabel={">>"}
+                        activeClassName={"pagination__link--active"}
+                      />
+                    </div>
+
+                    {/* STATUS */}
+                    <div
+                      className="tab-pane fade profile-search table-scroll"
+                      id="profile-search"
+                    >
+                      <div className="station-status-wrapper w-100 d-flex align-items-center justify-content-between flex-wrap">
+                      {
+                          role == 'Region'
+                          ?
+                          <div className="d-flex align-items-center justify-content-between w-100 mb-4">
+                            <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
+                              {regionName}ga tegishli balans tashkilotlar
+                            </h1>
+                            <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
+                              setBalansOrgIdForStatus(undefined)
+                              getStationStatisByBalansOrgForStatus()
+                              setTableTitleForStatus(`${regionName}ga tegishli stansiyalar`)
+                            }}>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
+                              </div>
+                              <div className="d-flex align-items-center m-0">
+                                <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
+                              </div>
+                            </div>
+                          </div>
+                          :
+                          <h1 className="dashboard-heading ms-2">
+                            {balanceOrg.length > 0
+                            ? `${balanceOrgName} ga biriktirilgan qurilmalar`
+                            : `${name} ga biriktirilgan qurilmalar`}
+                          </h1>
+                        }
+                    </div>
+
+                      <AliceCarousel
+                        autoPlay={true}
+                        // infinite={true}
+                        autoPlayStrategy="all"
+                        responsive={responsive}
+                        disableButtonsControls={true}
+                        animationDuration="900"
+                        autoPlayInterval={10000}
+                        paddingLeft={40}
+                        mouseTracking
+                        items={itemsStationByStatus}
+                      />
+
+                    {
+                      role == 'Region'
+                      ?
+                      <h3>{tableTitleForStatus == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitleForStatus}</h3>
+                      :
+                      null
+                    }
+
+                      <div
+                        className="text-end d-flex align-items-center justify-content-end cursor-pointer ms-auto user-station-save"
+                        onClick={() => exportDataToExcel()}
+                      >
+                        <p className="m-0 p-0 user-station-save-data-desc">
+                          Ma'lumotni saqlash
+                        </p>
+                        <button className="ms-4 border border-0">
+                          <img src={excel} alt="excel" width={26} height={30} />
+                        </button>
+                      </div>
+                      {notWorkingStation?.length == 0 ? (
+                        <h3 className="alert alert-dark text-center mt-5">
+                          {tableTitleForStatus?.split('ga')[0]} da ishlamayotgan stansiya yo'q...
+                        </h3>
+                      ) : (
+                        <table className="c-table mt-4  w-10 0 table table-striped table-hover">
+                          <thead className="c-table__header main-background-color">
+                            <tr>
+                              <th className="c-table__col-label text-center text-light">
+                                Nomi
+                              </th>
+                              <th className="c-table__col-label text-center text-light">
+                                Imei
+                              </th>
+                              <th className="c-table__col-label text-center text-light">
+                                Status
+                              </th>
+                              <th className="c-table__col-label text-center text-light">
+                                Temperatura
+                              </th>
+                              <th className="c-table__col-label text-center text-light">
+                                Batareya
+                              </th>
+                              <th className="c-table__col-label text-center text-light">
+                                Signal
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="c-table__body">
+                            {notWorkingStation?.map((e, i) => {
+                              return (
+                                <tr
+                                  className="fs-6 column-admin-station"
+                                  key={i}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#exampleModal"
+                                  onClick={() => {
+                                    getStationWithImei(e.imel);
+                                  }}
+                                >
+                                  <td className="c-table__cell text-center">
+                                    <div className="d-flex align-items-center justify-content-center">
+                                      <span className="fs-6 fw-normal">
+                                        {e.name}
+                                      </span>
+                                      {
+                                        e.status == 1 && e.defective == true ?
+                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                                        : null
+                                      }
+                                    </div>
+                                  </td>
+                                  <td className="c-table__cell text-center">
+                                    {e.imel}
+                                  </td>
+                                  <td className="c-table__cell text-center">
+                                    {e.status  == '1' ? "ishlayapti" : "ishlamayapti"}
+                                  </td>
+                                  <td className="c-table__cell text-center">
+                                    {e.temperture}
+                                  </td>
+                                  <td
+                                    className={
+                                      "c-table__cell text-center " +
+                                      (e.battery > 77
+                                        ? "text-success"
+                                        : e.battery <= 77 && e.battery >= 50
+                                        ? "text-warning"
+                                        : e.battery < 50
+                                        ? "text-danger"
+                                        : "")
+                                    }
+                                  >
+                                    {e.battery}%
+                                  </td>
+                                  <td className="c-table__cell text-center">
+                                    {e.signal}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      )}
+
+                      <ReactPaginate
+                        pageCount={totalPagesForStatus}
+                        onPageChange={handlePageChangeForStatus}
                         forcePage={currentPage}
                         previousLabel={"<<"}
                         nextLabel={">>"}
@@ -1439,168 +1601,6 @@ const UserStations = (prop) => {
                       <ReactPaginate
                         pageCount={totalPagesForBattery}
                         onPageChange={handlePageChangeForBattery}
-                        forcePage={currentPage}
-                        previousLabel={"<<"}
-                        nextLabel={">>"}
-                        activeClassName={"pagination__link--active"}
-                      />
-                    </div>
-
-                    {/* STATUS */}
-                    <div
-                      className="tab-pane fade profile-search table-scroll"
-                      id="profile-search"
-                    >
-                      <div className="station-status-wrapper w-100 d-flex align-items-center justify-content-between flex-wrap">
-                      {
-                          role == 'Region'
-                          ?
-                          <div className="d-flex align-items-center justify-content-between w-100 mb-4">
-                            <h1 className="dashboard-heading ms-2 dashboard-heading-role dashboard-heading-role-last-data">
-                              {regionName}ga tegishli balans tashkilotlar
-                            </h1>
-                            <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
-                              setBalansOrgIdForStatus(undefined)
-                              getStationStatisByBalansOrgForStatus()
-                              setTableTitleForStatus(`${regionName}ga tegishli stansiyalar`)
-                            }}>
-                              <div className="d-flex align-items-center m-0">
-                                <img src={passive} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Passive</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countNotWorkingStationsRegion} ta</span>
-                              </div>
-                              <div className="d-flex align-items-center m-0">
-                                <img src={defective} className="ms-3" alt="active" width={35} height={35} /> <span className="fs-6 ms-1">No soz</span>: <span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countWorkingStationsDefectiveRegion} ta</span>
-                              </div>
-                            </div>
-                          </div>
-                          :
-                          <h1 className="dashboard-heading ms-2">
-                            {balanceOrg.length > 0
-                            ? `${balanceOrgName} ga biriktirilgan qurilmalar`
-                            : `${name} ga biriktirilgan qurilmalar`}
-                          </h1>
-                        }
-                    </div>
-
-                      <AliceCarousel
-                        autoPlay={true}
-                        // infinite={true}
-                        autoPlayStrategy="all"
-                        responsive={responsive}
-                        disableButtonsControls={true}
-                        animationDuration="900"
-                        autoPlayInterval={10000}
-                        paddingLeft={40}
-                        mouseTracking
-                        items={itemsStationByStatus}
-                      />
-
-                    {
-                      role == 'Region'
-                      ?
-                      <h3>{tableTitleForStatus == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitleForStatus}</h3>
-                      :
-                      null
-                    }
-
-                      <div
-                        className="text-end d-flex align-items-center justify-content-end cursor-pointer ms-auto user-station-save"
-                        onClick={() => exportDataToExcel()}
-                      >
-                        <p className="m-0 p-0 user-station-save-data-desc">
-                          Ma'lumotni saqlash
-                        </p>
-                        <button className="ms-4 border border-0">
-                          <img src={excel} alt="excel" width={26} height={30} />
-                        </button>
-                      </div>
-                      {notWorkingStation?.length == 0 ? (
-                        <h3 className="alert alert-dark text-center mt-5">
-                          {tableTitleForStatus?.split('ga')[0]} da ishlamayotgan stansiya yo'q...
-                        </h3>
-                      ) : (
-                        <table className="c-table mt-4  w-10 0 table table-striped table-hover">
-                          <thead className="c-table__header main-background-color">
-                            <tr>
-                              <th className="c-table__col-label text-center text-light">
-                                Nomi
-                              </th>
-                              <th className="c-table__col-label text-center text-light">
-                                Imei
-                              </th>
-                              <th className="c-table__col-label text-center text-light">
-                                Status
-                              </th>
-                              <th className="c-table__col-label text-center text-light">
-                                Temperatura
-                              </th>
-                              <th className="c-table__col-label text-center text-light">
-                                Batareya
-                              </th>
-                              <th className="c-table__col-label text-center text-light">
-                                Signal
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="c-table__body">
-                            {notWorkingStation?.map((e, i) => {
-                              return (
-                                <tr
-                                  className="fs-6 column-admin-station"
-                                  key={i}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#exampleModal"
-                                  onClick={() => {
-                                    getStationWithImei(e.imel);
-                                  }}
-                                >
-                                  <td className="c-table__cell text-center">
-                                    <div className="d-flex align-items-center justify-content-center">
-                                      <span className="fs-6 fw-normal">
-                                        {e.name}
-                                      </span>
-                                      {
-                                        e.status == 1 && e.defective == true ?
-                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
-                                        : null
-                                      }
-                                    </div>
-                                  </td>
-                                  <td className="c-table__cell text-center">
-                                    {e.imel}
-                                  </td>
-                                  <td className="c-table__cell text-center">
-                                    {e.status  == '1' ? "ishlayapti" : "ishlamayapti"}
-                                  </td>
-                                  <td className="c-table__cell text-center">
-                                    {e.temperture}
-                                  </td>
-                                  <td
-                                    className={
-                                      "c-table__cell text-center " +
-                                      (e.battery > 77
-                                        ? "text-success"
-                                        : e.battery <= 77 && e.battery >= 50
-                                        ? "text-warning"
-                                        : e.battery < 50
-                                        ? "text-danger"
-                                        : "")
-                                    }
-                                  >
-                                    {e.battery}%
-                                  </td>
-                                  <td className="c-table__cell text-center">
-                                    {e.signal}
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      )}
-
-                      <ReactPaginate
-                        pageCount={totalPagesForStatus}
-                        onPageChange={handlePageChangeForStatus}
                         forcePage={currentPage}
                         previousLabel={"<<"}
                         nextLabel={">>"}

@@ -1037,7 +1037,7 @@ const AdminStations = (prop) => {
                       id="profile-users"
                     >
                       <div className="w-100 d-flex align-items-center justify-content-between flex-wrap">
-                          <div className="d-flex align-items-center justify-content-between w-100 mb-4">
+                          <div className="d-flex align-items-center justify-content-between flex-wrap w-100 mb-4">
                             <h2 className="dashboard-heading ms-2 dashboard-heading-role">
                                 Jami viloyatlari
                             </h2>
@@ -1277,7 +1277,7 @@ const AdminStations = (prop) => {
                       id="profile-search"
                     >
                       <div className="station-status-wrapper w-100 d-flex align-items-center justify-content-between flex-wrap">
-                          <div className="d-flex align-items-center justify-content-between w-100 mb-4">
+                          <div className="d-flex align-items-center justify-content-between flex-wrap w-100 mb-4">
                           <h2 className="dashboard-heading ms-2 dashboard-heading-role">
                                 Jami viloyatlari
                             </h2>
@@ -1469,7 +1469,7 @@ const AdminStations = (prop) => {
                       className="tab-pane fade profile-overview table-scroll"
                       id="profile-overview"
                     >
-                      <div className="d-flex justify-content-between align-items-center pt-4 mb-3">
+                      <div className="d-flex justify-content-between align-items-center flex-wrap pt-4 mb-3">
                         <h3 className="stations-search-heading">
                           Batareya quvvati oralig'ini kiriting
                         </h3>
