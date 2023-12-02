@@ -1137,7 +1137,7 @@ const UserStations = (prop) => {
                       }
 
                       {allStation?.length == 0 ? (
-                        <h3 className="alert alert-dark text-center mt-5">
+                        <h3 className="alert alert-info text-center mt-5">
                           Hozircha bunday stansiya yo'q...
                         </h3>
                       ) : (
@@ -1299,7 +1299,7 @@ const UserStations = (prop) => {
                         </button>
                       </div>
                       {notWorkingStation?.length == 0 ? (
-                        <h3 className="alert alert-dark text-center mt-5">
+                        <h3 className="alert alert-info text-center mt-5">
                           {tableTitleForStatus?.split('ga')[0]} da ishlamayotgan stansiya yo'q...
                         </h3>
                       ) : (
@@ -1515,7 +1515,7 @@ const UserStations = (prop) => {
                       }
 
                       {allStationForBattery?.length == 0 ? (
-                        <h3 className="alert alert-dark text-center mt-5">
+                        <h3 className="alert alert-info text-center mt-5">
                           Hozircha bunday stansiya yo'q...
                         </h3>
                       ) : (
