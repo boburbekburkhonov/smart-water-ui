@@ -37,7 +37,9 @@ const AdminStations = (prop) => {
   const [minimumValue, setMinimumValue] = useState("");
   const [maximumValue, setMaximumValue] = useState("");
   const [stationsCountByRegion, setStationsCountByRegion] = useState();
+  const [stationsCountByRegionForStatus, setStationsCountByRegionForStatus] = useState();
   const [stationsCountByAdmin, setStationsCountByAdmin] = useState();
+  const [stationsCountByAdminForStatus, setStationsCountByAdminForStatus] = useState();
   const [allBalansOrg, setAllBalansOrg] = useState([]);
   const [balansOrgId, setBalansOrgId] = useState();
   const [balansOrgIdForBattery, setBalansOrgIdForBattery] = useState();
@@ -146,10 +148,20 @@ const AdminStations = (prop) => {
     .get(`/stations/getStationsCountByAdmin`)
     .then((data) => setStationsCountByAdmin(data.data))
 
+    // ! STATION COUNT BY ADMIN FOR STATUS
+    customFetch
+    .get(`/stations/getStationsCountByAdmin`)
+    .then((data) => setStationsCountByAdminForStatus(data.data))
+
      // ! STATION COUNT BY REGION
      customFetch
      .get(`/stations/getStationsCountByRegion?regionNumber=1`)
      .then((data) => setStationsCountByRegion(data.data))
+
+     // ! STATION COUNT BY REGION
+     customFetch
+     .get(`/stations/getStationsCountByRegion?regionNumber=1`)
+     .then((data) => setStationsCountByRegionForStatus(data.data))
 
     // ! NOT WORKING STATIONS
     customFetch
@@ -170,6 +182,13 @@ const AdminStations = (prop) => {
 
       setAllStationForBattery(request.data.data.data);
       setTotalPagesForBattery(request.data.data.metadata.lastPage);
+
+      // ! NOT WORKING STATIONS
+      const requestNotWorkingStation = await customFetch
+      .get(`/stations/searchStatusFalseByBalance?balanceOrganizationNumber=1&page=1&perPage=10`)
+
+      setNotWorkingStation(requestNotWorkingStation.data.data.data);
+      setTotalPagesForStatus(requestNotWorkingStation.data.data.metadata.lastPage);
     };
 
     fetchData();
@@ -233,7 +252,7 @@ const AdminStations = (prop) => {
     if(balansOrgIdForStatus == undefined){
       customFetch
         .get(
-          `/stations/all/statusOff?&page=${selectedPage.selected + 1}&perPage=10`
+          `/stations/searchStatusFalseByBalance?balanceOrganizationNumber=1&page=${selectedPage.selected + 1}&perPage=10`
         )
         .then((data) => {
           setNotWorkingStation(data.data.data.data);
@@ -448,7 +467,6 @@ const AdminStations = (prop) => {
         });
       }
 
-
       const workBook = XLSX.utils.book_new();
       const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
@@ -589,7 +607,7 @@ const AdminStations = (prop) => {
       const workSheet = XLSX.utils.json_to_sheet(resultExcelData);
 
       XLSX.utils.book_append_sheet(workBook, workSheet, "MySheet1");
-      const nameExcelFile = titleBalansOrgData.split("ma'lumotlar")
+      const nameExcelFile = titleBalansOrgDataForStatus.split("ma'lumotlar")
       nameExcelFile.join('')
 
       if (notWorkingStation.length > 0) {
@@ -656,23 +674,14 @@ const AdminStations = (prop) => {
   // ! STATION STATUS
   const getStationStatisByBalansOrgForStatus = id => {
     // ! NOT WORKING STATIONS
-    if(id == undefined){
-      customFetch
-      .get(`/stations/all/statusOff?&page=1&perPage=10`)
-      .then((data) => {
-        setNotWorkingStation(data.data.data.data);
-        setTotalPagesForStatus(data.data.data.metadata.lastPage);
-      });
-    }else {
-      setTableTitleForStatus(`${foundBalansOrgName(id)}ga tegishli ishlamayotganlar stansiyalar ro'yhati`)
+    setTableTitleForStatus(`${foundBalansOrgName(id)}ga tegishli ishlamayotganlar stansiyalar ro'yhati`)
 
-      customFetch
-      .get(`/stations/searchStatusFalseByBalance?balanceOrganizationNumber=${id}&page=1&perPage=10`)
-      .then((data) => {
-        setNotWorkingStation(data.data.data.data);
-        setTotalPagesForStatus(data.data.data.metadata.lastPage);
-      });
-    }
+    customFetch
+    .get(`/stations/searchStatusFalseByBalance?balanceOrganizationNumber=${id}&page=1&perPage=10`)
+    .then((data) => {
+      setNotWorkingStation(data.data.data.data);
+      setTotalPagesForStatus(data.data.data.metadata.lastPage);
+    });
   }
 
   // ! ITEMS FOR STATION LIST
@@ -740,10 +749,11 @@ const AdminStations = (prop) => {
   });
 
   // ! ITEMS FOR STATION STATUS
-  const itemsStationByStatus = stationsCountByRegion?.gruopOrganization.map((e, i) => {
+  const itemsStationByStatus = stationsCountByRegionForStatus?.gruopOrganization.map((e, i) => {
     return  <div className="sort-dashboard-list-item ms-3" onClick={(s) => {
       setBalansOrgIdForStatus(e.balance_organization_id)
       getStationStatisByBalansOrgForStatus(e.balance_organization_id)
+      setTitleBalansOrgDataForStatus(`${foundBalansOrgName(e.balance_organization_id)} ga tegishli ma'lumotlar`)
     }}>
        <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">
        <h6>
@@ -801,29 +811,29 @@ const AdminStations = (prop) => {
         // ! STATION COUNT BY REGION
         customFetch
         .get(`/stations/getStationsCountByRegion?regionNumber=1`)
-        .then((data) => setStationsCountByRegion(data.data))
+        .then((data) => setStationsCountByRegionForStatus(data.data))
 
         setCount(count + 1)
 
-        setTitleBalansOrgData(`${foundBalansOrgName(1)} ga tegishli ma'lumotlar`)
-        setBalansOrgId(undefined)
+        setTitleBalansOrgDataForStatus(`${foundBalansOrgName(1)} ga tegishli ma'lumotlar`)
+        setBalansOrgIdForStatus(undefined)
     }else {
         // ! STATION COUNT BY REGION
         const getStationByRegionId = async () => {
            const requestStationByRegionId = await customFetch
             .get(`/stations/getStationsCountByRegion?regionNumber=${regionId}`)
-            setStationsCountByRegion(requestStationByRegionId.data)
+            setStationsCountByRegionForStatus(requestStationByRegionId.data)
 
             const balansOrgId = requestStationByRegionId.data.gruopOrganization[0]?.balance_organization_id
 
-            setTitleBalansOrgData(`${foundBalansOrgName(balansOrgId)} ga tegishli ma'lumotlar`)
-            setBalansOrgId(balansOrgId)
+            setTitleBalansOrgDataForStatus(`${foundBalansOrgName(balansOrgId)} ga tegishli ma'lumotlar`)
+            setBalansOrgIdForStatus(balansOrgId)
 
             // ! ALL STATION
-            const request = await customFetch.get(`/stations/all/balanceOrganization?balanceOrganizationNumber=${balansOrgId}&page=1&perPage=10`);
+            const request = await customFetch.get(`/stations/searchStatusFalseByBalance?balanceOrganizationNumber=${balansOrgId}&page=1&perPage=10`);
 
-            setAllStation(request.data.data.data);
-            setTotalPages(request.data.data.metadata.lastPage);
+            setNotWorkingStation(request.data.data.data);
+            setTotalPagesForStatus(request.data.data.metadata.lastPage);
         }
         getStationByRegionId()
     }
@@ -1386,11 +1396,11 @@ const AdminStations = (prop) => {
 
                         <div className="d-flex align-items-center justify-content-between flex-wrap mb-5">
                             {
-                                stationsCountByAdmin?.gruopRegion?.map((e, i) => {
+                                stationsCountByAdminForStatus?.gruopRegion?.map((e, i) => {
                                     return  <div className="sort-dashboard-list-item sort-dashboard-list-item-admin ms-3 mt-4" key={i} onClick={() => {
-                                        getStationCountByRegionIdForList(e.region_id)
-                                        setTitleBalansOrg(`Jami ${foundRegionName(e.region_id)} balans tashkilotlari`)
-                                        setTableTitle("Umumiy stansiyalar soni");
+                                        getStationCountByRegionIdForStatus(e.region_id)
+                                        setTitleBalansOrgForStatus(`Jami ${foundRegionName(e.region_id)} balans tashkilotlari`)
+                                        setTableTitleForStatus("Umumiy stansiyalar soni");
                                     }}>
                                         <div className="sort-dashboard-wrapper sort-dashboard-wrapper-last-data">
                                         <h6>
@@ -1414,7 +1424,7 @@ const AdminStations = (prop) => {
 
                         <div className="d-flex justify-content-between align-items-center mb-4">
                           <h2 className="dashboard-heading ms-2 dashboard-heading-role">
-                            {titleBalansOrg}
+                            {titleBalansOrgForStatus}
                           </h2>
                           <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor">
                             <div className="d-flex align-items-center m-0">
