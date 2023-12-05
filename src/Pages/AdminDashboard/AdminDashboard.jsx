@@ -49,6 +49,7 @@ const AdminDashboard = () => {
   const [tableTitle, setTableTitle] = useState("Umumiy stansiyalar soni");
   const [titleBalansOrg, setTitleBalansOrg] = useState("Jami Qoraqalpog‘iston Respublikasi balans tashkilotlari");
   const [titleBalansOrgData, setTitleBalansOrgData] = useState("Amudaryo TIB ga tegishli ma'lumotlar");
+  const [warningStation, setWarningStation] = useState();
   const chartRef = useRef();
 
   // ! CUSTOM FETCH
@@ -890,18 +891,18 @@ const AdminDashboard = () => {
   }
 
   const getWarningStation = item => {
-    return item
-    console.log(item);
     if(item?.lastData.volume == -1 && item?.lastData.level == -1) {
       return {
         id: 0,
-        name: item?.name
+        name: item?.name,
+        volume: -1,
+        level: -1
       }
     }else if (item?.lastData.volume == -1 && item?.lastData.level != -1) {
       return {
         id: 1,
         volume: -1,
-        name: item?.name
+        name: item?.name,
       }
     } else if (item?.lastData.volume != -1 && item?.lastData.level == -1) {
       return {
@@ -911,7 +912,7 @@ const AdminDashboard = () => {
       }
     }
   }
-  console.log(getWarningStation());
+
   return (
     <section className="home-section p-0">
       {/* MODAL */}
@@ -1222,26 +1223,56 @@ const AdminDashboard = () => {
                 <img  src={warning} width={100} height={100} alt="warning" />
               </div>
             </div>
-            <div className="modal-body">
+            <div className="modal-body b-0">
               <h4 className="heading-modal-warning text-center">
                 Qurilmada nosozlik aniqlandi!
               </h4>
-              <ul className="m-0 p-0 ps-3">
-                <li className="d-flex align-items-center mt-4">
-                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
-                  <p className="m-0 ms-2">
-                    {getWarningStation()}  Qurilmaning sozlamalari noto'g'ri qilingan bo'lishi mumkin
-                  </p>
-                </li>
-                <li className="d-flex align-items-center mt-3">
-                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
-                  <p className="m-0 ms-2">
-                  Qurilmaga suv kirgan bo'lishi mumkin
-                  </p>
-                </li>
-              </ul>
+              {
+                getWarningStation(warningStation)?.id == 0
+                ?
+                <ul className="m-0 p-0 ps-3">
+                  <li className="d-flex align-items-start mt-4">
+                      <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                      <div className="m-0 ms-2 d-flex align-items-center flex-wrap">
+                        <p className="m-0 ms-2 text-dark">
+                          {getWarningStation(warningStation)?.name} nomli qurilmaning sensorida nosozlik mavjud bo'lishi mumkin
+                        </p>
+                        <p className="d-flex align-items-center text-dark m-0 mt-2 mb-1">
+                          ● Nosozlik sathning qiymatlarida: <span className="fs-6 ms-1 text-danger">{getWarningStation(warningStation)?.level} sm</span>
+                        </p>
+                        <p className="d-flex align-items-center text-dark m-0">
+                          ● Nosozlik koordinata jadvalining qiymatlarida: <span className="fs-6 ms-1 text-danger">{getWarningStation(warningStation)?.volume} m³/s</span>
+                        </p>
+                      </div>
+                  </li>
+                  <li className="d-flex align-items-start mt-3">
+                    <p className="text-dark ms-2 fst-italic">
+                      *Qurilmaning sensori ishlamayotgan bo'lishi mumkin!
+                    </p>
+                  </li>
+                </ul>
+                :
+                <ul className="m-0 p-0 ps-3">
+                  <li className="d-flex align-items-start mt-4">
+                      <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                      <div className="m-0 ms-2 d-flex align-items-center flex-wrap">
+                        <p className="m-0 ms-2 text-dark">
+                          {getWarningStation(warningStation)?.name} nomli qurilmaning sensorida nosozlik mavjud bo'lishi mumkin
+                        </p>
+                        <p className="d-flex align-items-center text-dark mt-3">
+                          ● Nosozlik koordinata jadvalining qiymatlarida: <span className="fs-6 ms-1 text-danger">{getWarningStation(warningStation)?.volume} m³/s</span>
+                        </p>
+                      </div>
+                  </li>
+                  <li className="d-flex align-items-start mt-3">
+                    <p className="text-dark ms-2 fst-italic">
+                      *Qurilma xotirasiga kiritilgan koordinata jadvali noto'g'ri yoki umuman kiritilmagan bo'lishi mumkin!
+                    </p>
+                  </li>
+                </ul>
+              }
             </div>
-            <div className="modal-footer modal-footer-warning">
+            <div className="modal-footer modal-footer-warning pt-0">
               <button className="btn btn-warning text-light w-25" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Ok</button>
             </div>
           </div>
@@ -1647,7 +1678,7 @@ const AdminDashboard = () => {
                                       {
                                         e.status == 1 && e.defective == true ?
                                         <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35}
-                                        onClick={() => getWarningStation(e)}
+                                        onClick={() => setWarningStation(e)}
                                         />
                                         : null
                                       }
