@@ -429,6 +429,7 @@ const AdminDashboard = () => {
 
   const onClick = (event) => {
     setDataOrStation("station");
+    setWhichStation('allStation')
     const index = getElementsAtEvent(chartRef.current, event)[0]?.index;
 
     if(balansOrgId == undefined){
@@ -891,24 +892,73 @@ const AdminDashboard = () => {
   }
 
   const getWarningStation = item => {
-    if(item?.lastData.volume == -1 && item?.lastData.level == -1) {
-      return {
-        id: 0,
-        name: item?.name,
-        volume: -1,
-        level: -1
+    if(typeof item != 'object'){
+      const foundStation = viewStation.find(e => e._id == item)
+
+      if(foundStation?.lastData?.volume == -1 && foundStation?.lastData?.level == -1) {
+        return {
+          id: 0,
+          name: foundStation?.name,
+          volume: -1,
+          level: -1
+        }
+      }else if (foundStation?.lastData?.volume == -1 && foundStation?.lastData?.level != -1) {
+        return {
+          id: 1,
+          volume: -1,
+          name: foundStation?.name,
+        }
+      } else if (foundStation?.lastData?.volume != -1 && foundStation?.lastData?.level == -1) {
+        return {
+          id: 2,
+          level: -1,
+          name: foundStation?.name
+        }
       }
-    }else if (item?.lastData.volume == -1 && item?.lastData.level != -1) {
-      return {
-        id: 1,
-        volume: -1,
-        name: item?.name,
+    }
+    else if(item?.station == undefined){
+      console.log(item);
+
+      if(item?.lastData?.volume == -1 && item?.lastData?.level == -1) {
+        return {
+          id: 0,
+          name: item?.name,
+          volume: -1,
+          level: -1
+        }
+      }else if (item?.lastData?.volume == -1 && item?.lastData?.level != -1) {
+        return {
+          id: 1,
+          volume: -1,
+          name: item?.name,
+        }
+      } else if (item?.lastData?.volume != -1 && item?.lastData?.level == -1) {
+        return {
+          id: 2,
+          level: -1,
+          name: item?.name
+        }
       }
-    } else if (item?.lastData.volume != -1 && item?.lastData.level == -1) {
-      return {
-        id: 2,
-        level: -1,
-        name: item?.name
+    }else {
+      if(item?.volume == -1 && item?.level == -1) {
+        return {
+          id: 0,
+          name: item?.station.name,
+          volume: -1,
+          level: -1
+        }
+      }else if (item?.volume == -1 && item?.level != -1) {
+        return {
+          id: 1,
+          volume: -1,
+          name: item?.station.name,
+        }
+      } else if (item?.volume != -1 && item?.level == -1) {
+        return {
+          id: 2,
+          level: -1,
+          name: item?.station.name
+        }
       }
     }
   }
@@ -1013,7 +1063,7 @@ const AdminDashboard = () => {
                               </span>
                               {
                                 e?.status == 1 && e?.defective == true ?
-                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} onClick={() => setWarningStation(e)} />
                                 : null
                               }
                             </div>
@@ -1073,7 +1123,7 @@ const AdminDashboard = () => {
                               </span>
                               {
                                 e.station?.status == 1 && e.station?.defective == true ?
-                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} onClick={() => setWarningStation(e)} />
                                 : null
                               }
                             </div>
@@ -1184,7 +1234,7 @@ const AdminDashboard = () => {
                               </span>
                               {
                                 e?.status == 1 && e?.defective == true ?
-                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} onClick={() => setWarningStation(e._id)} />
                                 : null
                               }
                             </div>
@@ -1690,7 +1740,8 @@ const AdminDashboard = () => {
                                       </span>
                                       {
                                         e.station?.status == 1 && e.station?.defective == true ?
-                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35}
+                                        onClick={() => setWarningStation(e)} />
                                         : null
                                       }
                                     </div>
@@ -1825,7 +1876,7 @@ const AdminDashboard = () => {
                                     </span>
                                     {
                                       e?.status == 1 && e?.defective == true ?
-                                      <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} />
+                                      <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={35} height={35} onClick={() => setWarningStation(e._id)} />
                                       : null
                                     }
                                   </div>
