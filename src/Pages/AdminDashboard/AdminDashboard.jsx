@@ -917,8 +917,6 @@ const AdminDashboard = () => {
       }
     }
     else if(item?.station == undefined){
-      console.log(item);
-
       if(item?.lastData?.volume == -1 && item?.lastData?.level == -1) {
         return {
           id: 0,
