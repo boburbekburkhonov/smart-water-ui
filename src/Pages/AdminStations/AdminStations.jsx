@@ -777,11 +777,9 @@ const AdminStations = (prop) => {
       //       name: item?.name
       //     }
       //   }
-      // }else {
+      // }  else {
       //   return 1
       // }
-
-
   }
 
     return (
