@@ -54,6 +54,7 @@ const AdminStations = (prop) => {
   const [titleBalansOrgForStatus, setTitleBalansOrgForStatus] = useState("Jami Qoraqalpog‘iston Respublikasi balans tashkilotlari");
   const [titleBalansOrgDataForStatus, setTitleBalansOrgDataForStatus] = useState("Amudaryo TIB ga tegishli ma'lumotlar");
   const [warningStation, setWarningStation] = useState();
+  const [foundStationForDefect, setFoundStationForDefect] = useState();
 
   // ! CUSTOM FETCH
   const customFetch = axios.create({
@@ -195,6 +196,11 @@ const AdminStations = (prop) => {
 
       setNotWorkingStation(requestNotWorkingStation.data.data.data);
       setTotalPagesForStatus(requestNotWorkingStation.data.data.metadata.lastPage);
+
+      // ! LAST DATA
+      const requestLastData = await customFetch
+      .get(`/last-data/getLastDataByOrganization?page=1&perPage=${request.data.data.metadata.total * 100}&organization=1`)
+      setFoundStationForDefect(requestLastData.data.data);
     };
 
     fetchData();
@@ -594,6 +600,13 @@ const AdminStations = (prop) => {
         setAllStation(data.data.data.data);
         setTotalPages(data.data.data.metadata.lastPage);
       });
+
+      // ! LAST DATA
+      customFetch
+      .get(`/last-data/getLastDataByOrganization?page=1&perPage=${stationsCountByAdmin?.countStations}&organization=${id}`)
+      .then((data) => {
+        setFoundStationForDefect(data.data.data);
+      });
     }
   }
 
@@ -695,6 +708,13 @@ const AdminStations = (prop) => {
 
             setAllStation(request.data.data.data);
             setTotalPages(request.data.data.metadata.lastPage);
+
+            // ! LAST DATA
+            customFetch
+            .get(`/last-data/getLastDataByOrganization?page=1&perPage=${stationsCountByAdmin?.countStations}&organization=${balansOrgId}`)
+            .then((data) => {
+              setFoundStationForDefect(data.data.data);
+            });
         }
         getStationByRegionId()
     }
@@ -742,48 +762,35 @@ const AdminStations = (prop) => {
         })
   }
 
-  const getSearchStationForDefect = station => {
-    // ! FOUND STATION
-    const fetchData = async () => {
-      const request = await customFetch.get(`/last-data/searchLastDataByStation?search=${station?.name}&page=1&perPage=10`);
-
-      const [dataStation] = request?.data?.data?.data
-
-      return dataStation
-    }
-    fetchData()
-  }
-
   const getWarningStation = item => {
-      console.log(getSearchStationForDefect(item));
-      // if(dataStation?.lastData != undefined){
-      //   if(dataStation?.lastData?.volume == -1 && dataStation?.lastData?.level == -1) {
-      //     return {
-      //       id: 0,
-      //       name: item?.name,
-      //       volume: -1,
-      //       level: -1
-      //     }
-      //   }else if (dataStation?.lastData?.volume == -1 && dataStation?.lastData?.level != -1) {
-      //     return {
-      //       id: 1,
-      //       volume: -1,
-      //       name: item?.name,
-      //     }
-      //   } else if (dataStation?.lastData?.volume != -1 && dataStation?.lastData?.level == -1) {
-      //     return {
-      //       id: 2,
-      //       level: -1,
-      //       name: item?.name
-      //     }
-      //   }
-      // }  else {
-      //   return 1
-      // }
+    const station = foundStationForDefect?.find(e => e._id == item?._id)
+
+    if(station?.lastData != undefined){
+        if(station?.lastData?.volume == -1 && station?.lastData?.level == -1) {
+          return {
+            id: 0,
+            name: item?.name,
+            volume: -1,
+            level: -1
+          }
+        }else if (station?.lastData?.volume == -1 && station?.lastData?.level != -1) {
+          return {
+            id: 1,
+            volume: -1,
+            name: item?.name,
+          }
+        } else if (station?.lastData?.volume != -1 && station?.lastData?.level == -1) {
+          return {
+            id: 2,
+            level: -1,
+            name: item?.name
+          }
+        }
+      }
   }
 
-    return (
-        <HelmetProvider>
+  return (
+      <HelmetProvider>
       {/* MODAL DEFECT */}
       <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
         <div className="modal-dialog modal-warning modal-dialog-centered">
@@ -797,8 +804,6 @@ const AdminStations = (prop) => {
               <h4 className="heading-modal-warning text-center">
                 Qurilmada nosozlik aniqlandi!
               </h4>
-              {/* {console.log(getWarningStation(warningStation))}
-              {console.log(warningStation)} */}
               {
                 getWarningStation(warningStation)?.id == 0
                 ?
@@ -855,7 +860,7 @@ const AdminStations = (prop) => {
         {allStation.length > 0 ? (
           <div className="container-fluid">
             <div>
-              {/* ToastContainer */}
+              {/* ToastContainer  */}
               <ToastContainer
                 position="top-center"
                 autoClose={1000}
@@ -1623,14 +1628,6 @@ const AdminStations = (prop) => {
                         </button>
                       </div>
 
-                      {
-                        role == 'Region'
-                        ?
-                        <h3>{tableTitleForBattery == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitleForBattery}</h3>
-                        :
-                        null
-                      }
-
                       {allStationForBattery?.length == 0 ? (
                         <h3 className="alert alert-info text-center mt-5">
                           Hozircha bunday stansiya yo'q...
@@ -1676,11 +1673,6 @@ const AdminStations = (prop) => {
                                       <span className="fs-6 fw-normal">
                                         {e.name}
                                       </span>
-                                      {
-                                        e.status == 1 && e.defective == true ?
-                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
-                                        : null
-                                      }
                                     </div>
                                   </td>
                                   <td className="c-table__cell text-center">
