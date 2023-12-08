@@ -45,6 +45,8 @@ const UserStations = (prop) => {
   const [tableTitleForBattery, setTableTitleForBattery] = useState();
   const [tableTitleForStatus, setTableTitleForStatus] = useState();
   const [regionName, setRegionName] = useState();
+  const [warningStation, setWarningStation] = useState();
+  const [foundStationForDefect, setFoundStationForDefect] = useState();
   const name = window.localStorage.getItem("name");
   const role = window.localStorage.getItem("role");
 
@@ -134,14 +136,43 @@ const UserStations = (prop) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // ! ALL STATIONS
-      const request = await customFetch.get(`/stations/all?page=1&perPage=10`);
+      if(role == 'Organization'){
+        const request = await customFetch.get(`/stations/all?page=1&perPage=10`);
 
-      setAllStation(request.data.data.data);
-      setTotalPages(request.data.data.metadata.lastPage);
+        setAllStation(request.data.data.data);
+        setTotalPages(request.data.data.metadata.lastPage);
 
-      setAllStationForBattery(request.data.data.data);
-      setTotalPagesForBattery(request.data.data.metadata.lastPage);
+        setAllStationForBattery(request.data.data.data);
+        setTotalPagesForBattery(request.data.data.metadata.lastPage);
+
+        // ! LAST DATA
+        const requestLastData = await customFetch
+        .get(`/last-data/getLastDataByOrganization?page=1&perPage=${request.data.data.metadata.total}&organization=${localStorage.getItem('name')}`)
+
+        setFoundStationForDefect(requestLastData.data.data);
+      }else {
+        // ! ALL STATIONS
+        const request = await customFetch.get(`/stations/all?page=1&perPage=10`);
+
+        setAllStationForBattery(request.data.data.data);
+        setTotalPagesForBattery(request.data.data.metadata.lastPage);
+
+        // ! STATION BY REGION
+        const requestCountRegion = await customFetch
+        .get(`/stations/getStationsCountByRegion?regionNumber=${name}`)
+        setStationsCountByRegion(requestCountRegion.data)
+        let balansId = requestCountRegion.data?.gruopOrganization[0].balance_organization_id
+        setBalansOrgId(balansId)
+
+        const requestStation = await customFetch.get(`/stations/all/balanceOrganization?balanceOrganizationNumber=${balansId}&page=1&perPage=10`);
+
+        setAllStation(requestStation.data.data.data);
+        setTotalPages(requestStation.data.data.metadata.lastPage);
+        // ! LAST DATA
+        const requestLastData = await customFetch
+        .get(`/last-data/getLastDataByOrganization?page=1&perPage=${requestCountRegion.data.countStationsByRegion}&organization=${balansId}`)
+        setFoundStationForDefect(requestLastData.data.data);
+      }
     };
 
     fetchData();
@@ -161,11 +192,6 @@ const UserStations = (prop) => {
         setTotalPagesForStatus(data.data.data.metadata.lastPage);
       });
 
-    // ! STATION BY REGION
-    customFetch
-      .get(`/stations/getStationsCountByRegion?regionNumber=${name}`)
-      .then((data) => setStationsCountByRegion(data.data))
-
     // ! ALL BALANS ORG
     customFetch
     .get(`/balance-organizations/all-find`)
@@ -179,7 +205,7 @@ const UserStations = (prop) => {
         .then((data) => {
           setAllStation(data.data.data.data);
         });
-    }else {
+    } else {
       customFetch
       .get(`/stations/all/balanceOrganization?balanceOrganizationNumber=${balansOrgId}&page=${selectedPage.selected + 1}&perPage=10`)
       .then((data) => {
@@ -597,14 +623,6 @@ const UserStations = (prop) => {
   // ! STATION LIST
   const getStationStatisByBalansOrgForList = id => {
     // !  STATIONS BY BALANS ORGANISATION
-    if(id == undefined){
-      customFetch
-      .get(`/stations/all?page=1&perPage=10`)
-      .then((data) => {
-        setAllStation(data.data.data.data);
-        setTotalPages(data.data.data.metadata.lastPage);
-      });
-    }else {
       setTableTitle(`${foundBalansOrgName(id)}ga tegishli stansiyalar`)
 
       customFetch
@@ -613,7 +631,13 @@ const UserStations = (prop) => {
         setAllStation(data.data.data.data);
         setTotalPages(data.data.data.metadata.lastPage);
       });
-    }
+
+      // ! LAST DATA
+      customFetch
+      .get(`/last-data/getLastDataByOrganization?page=1&perPage=${stationsCountByRegion?.countStationsByRegion}&organization=${id}`)
+      .then((data) => {
+        setFoundStationForDefect(data.data.data);
+      });
   }
 
   // ! STATION BATTERY
@@ -743,6 +767,33 @@ const UserStations = (prop) => {
      </div>
   });
 
+  const getWarningStation = item => {
+    const station = foundStationForDefect?.find(e => e._id == item?._id)
+
+    if(station?.lastData != undefined){
+        if(station?.lastData?.volume == -1 && station?.lastData?.level == -1) {
+          return {
+            id: 0,
+            name: item?.name,
+            volume: -1,
+            level: -1
+          }
+        }else if (station?.lastData?.volume == -1 && station?.lastData?.level != -1) {
+          return {
+            id: 1,
+            volume: -1,
+            name: item?.name,
+          }
+        } else if (station?.lastData?.volume != -1 && station?.lastData?.level == -1) {
+          return {
+            id: 2,
+            level: -1,
+            name: item?.name
+          }
+        }
+      }
+  }
+
   return (
     <HelmetProvider>
       {/* MODAL DEFECT */}
@@ -754,26 +805,56 @@ const UserStations = (prop) => {
                 <img  src={warning} width={100} height={100} alt="warning" />
               </div>
             </div>
-            <div className="modal-body">
+            <div className="modal-body b-0">
               <h4 className="heading-modal-warning text-center">
-                Qurilmaning no sozligining sabablari!
+                Qurilmada nosozlik aniqlandi!
               </h4>
-              <ul className="m-0 p-0 ps-3">
-                <li className="d-flex align-items-center mt-4">
-                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
-                  <p className="m-0 ms-2">
-                    Qurilmaning sozlamalari noto'g'ri qilingan bo'lishi mumkin
-                  </p>
-                </li>
-                <li className="d-flex align-items-center mt-3">
-                  <img src={warningMessage} width={25} height={25} alt="warningMessage" />
-                  <p className="m-0 ms-2">
-                  Qurilmaga suv kirgan bo'lishi mumkin
-                  </p>
-                </li>
-              </ul>
+              {
+                getWarningStation(warningStation)?.id == 0
+                ?
+                <ul className="m-0 p-0 ps-3">
+                  <li className="d-flex align-items-start mt-4">
+                      <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                      <div className="m-0 ms-2 d-flex align-items-center flex-wrap">
+                        <p className="m-0 ms-2 text-dark">
+                          {getWarningStation(warningStation)?.name} nomli qurilmaning sensorida nosozlik mavjud bo'lishi mumkin
+                        </p>
+                        <p className="d-flex align-items-center text-dark m-0 mt-2 mb-1">
+                          ● Nosozlik sathning qiymatlarida: <span className="fs-6 ms-1 text-danger">{getWarningStation(warningStation)?.level} sm</span>
+                        </p>
+                        <p className="d-flex align-items-center text-dark m-0">
+                          ● Nosozlik koordinata jadvalining qiymatlarida: <span className="fs-6 ms-1 text-danger">{getWarningStation(warningStation)?.volume} m³/s</span>
+                        </p>
+                      </div>
+                  </li>
+                  <li className="d-flex align-items-start mt-3">
+                    <p className="text-dark ms-2 fst-italic">
+                      *Qurilmaning sensori ishlamayotgan bo'lishi mumkin!
+                    </p>
+                  </li>
+                </ul>
+                :
+                <ul className="m-0 p-0 ps-3">
+                  <li className="d-flex align-items-start mt-4">
+                      <img src={warningMessage} width={25} height={25} alt="warningMessage" />
+                      <div className="m-0 ms-2 d-flex align-items-center flex-wrap">
+                        <p className="m-0 ms-2 text-dark">
+                          {getWarningStation(warningStation)?.name} nomli qurilmaning sensorida nosozlik mavjud bo'lishi mumkin
+                        </p>
+                        <p className="d-flex align-items-center text-dark mt-3">
+                          ● Nosozlik koordinata jadvalining qiymatlarida: <span className="fs-6 ms-1 text-danger">{getWarningStation(warningStation)?.volume} m³/s</span>
+                        </p>
+                      </div>
+                  </li>
+                  <li className="d-flex align-items-start mt-3">
+                    <p className="text-dark ms-2 fst-italic">
+                      *Qurilma xotirasiga kiritilgan koordinata jadvali noto'g'ri yoki umuman kiritilmagan bo'lishi mumkin!
+                    </p>
+                  </li>
+                </ul>
+              }
             </div>
-            <div className="modal-footer modal-footer-warning">
+            <div className="modal-footer modal-footer-warning pt-0">
               <button className="btn btn-warning text-light w-25" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Ok</button>
             </div>
           </div>
@@ -1047,9 +1128,8 @@ const UserStations = (prop) => {
                               {regionName}ga tegishli balans tashkilotlar
                             </h1>
                             <div className="region-heading-statis-wrapper region-heading-statis-wrapper-last-data d-flex cursor" onClick={() => {
-                              setBalansOrgId(undefined)
+                              setCount(count + 1)
                               getStationStatisByBalansOrgForList()
-                              setTableTitle(`${regionName}ga tegishli stansiyalar`)
                             }}>
                               <div className="d-flex align-items-center m-0">
                                 <img src={all} alt="active" width={35} height={35} /> <span className="fs-6 ms-1">Jami</span> :<span className="fs-6 ms-1 fw-semibold">{stationsCountByRegion?.countStationsByRegion} ta</span>
@@ -1131,7 +1211,7 @@ const UserStations = (prop) => {
                       {
                         role == 'Region'
                         ?
-                        <h3>{tableTitle == undefined ? `${regionName} ga tegishli stansiyalar` : tableTitle}</h3>
+                        <h3>{`${foundBalansOrgName(balansOrgId)} ga tegishli stansiyalar`}</h3>
                         :
                         null
                       }
@@ -1183,7 +1263,7 @@ const UserStations = (prop) => {
                                       </span>
                                       {
                                         e.status == 1 && e.defective == true ?
-                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
+                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} onClick={() => setWarningStation(e)} />
                                         : null
                                       }
                                     </div>
@@ -1559,11 +1639,6 @@ const UserStations = (prop) => {
                                       <span className="fs-6 fw-normal">
                                         {e.name}
                                       </span>
-                                      {
-                                        e.status == 1 && e.defective == true ?
-                                        <img className="cursor-pointer" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src={warning} alt="warning" width={30} height={30} />
-                                        : null
-                                      }
                                     </div>
                                   </td>
                                   <td className="c-table__cell text-center">
