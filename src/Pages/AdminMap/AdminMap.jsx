@@ -313,7 +313,7 @@ const AdminMap = () => {
           }
         }
     }
- }
+  }
 
     return (
       <section className="home-section py-3">
