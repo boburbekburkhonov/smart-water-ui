@@ -136,7 +136,7 @@ const UserStations = (prop) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if(role == 'Organization'){
+      if(role == 'Organization' || role == 'USER'){
         const request = await customFetch.get(`/stations/all?page=1&perPage=10`);
 
         setAllStation(request.data.data.data);
@@ -147,8 +147,7 @@ const UserStations = (prop) => {
 
         // ! LAST DATA
         const requestLastData = await customFetch
-        .get(`/last-data/getLastDataByOrganization?page=1&perPage=${request.data.data.metadata.total}&organization=${localStorage.getItem('name')}`)
-
+        .get(`/last-data/getLastDataByOrganization?page=1&perPage=${request.data.data.metadata.total}&organization=${role == 'Organization' ? localStorage.getItem('balanceOrgId') : request.data.data.data[0]?.balance_organization_id}`)
         setFoundStationForDefect(requestLastData.data.data);
       }else {
         // ! ALL STATIONS

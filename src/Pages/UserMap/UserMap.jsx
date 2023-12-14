@@ -207,7 +207,6 @@ const UserMap = () => {
   if (!isLoaded) return <div>Loading...</div>;
 
   const getWarningStation = item => {
-    console.log(item);
     if(item?.lastData != undefined) {
         if(item?.lastData?.volume == -1 && item?.lastData?.level == -1) {
           return {
